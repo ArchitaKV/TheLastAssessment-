@@ -1,0 +1,71 @@
+{
+  "source": "Documentation/The_Last_Assessment_Complete_Story_Script.md",
+  "startNode": "prologue",
+  "nodes": [
+    {
+      "id": "prologue",
+      "act": "",
+      "title": "Prologue — Post-Death Assessment",
+      "pre": [
+        { "speaker": "ASSESSOR", "text": "Welcome. Your death has been confirmed, and your memories have been preserved for evaluation." },
+        { "speaker": "PROTAGONIST", "text": "So… this is what happens after you die?" },
+        { "speaker": "ASSESSOR", "text": "In your case, yes. Before your memories can be processed, we must assess their continuity and integrity." },
+        { "speaker": "PROTAGONIST", "text": "And what happens after that?" },
+        { "speaker": "ASSESSOR", "text": "Your results will determine the next stage." },
+        { "caption": "PRELIMINARY VALUATION: 143 CREDITS" },
+        { "speaker": "PROTAGONIST", "text": "What are credits supposed to mean?" },
+        { "speaker": "ASSESSOR", "text": "Your assessment will clarify your result. Shall we begin?" },
+        { "speaker": "ASSESSOR", "text": "There are twenty questions. Some concern your memories, while others concern your decisions and experiences. Please answer as accurately as you can." },
+        { "speaker": "PROTAGONIST", "text": "And if I can't remember something?" },
+        { "speaker": "ASSESSOR", "text": "Uncertainty is an acceptable response." }
+      ],
+      "next": "q1"
+    },
+    {
+      "id": "q1",
+      "number": 1,
+      "act": "I",
+      "title": "Familiarity",
+      "question": { "speaker": "ASSESSOR", "text": "People sometimes recognise places or voices without remembering where they encountered them. Has that happened to you?" },
+      "choices": [
+        { "id": "A", "text": "Yes, quite often." },
+        { "id": "B", "text": "Occasionally, but I usually remember eventually." },
+        { "id": "C", "text": "Rarely. I trust what I remember." },
+        { "id": "D", "text": "Lately, more often than I'd like." }
+      ],
+      "post": [
+        { "speaker": "PROTAGONIST", "text": "Is that normal after death?" },
+        { "speaker": "ASSESSOR", "text": "Memory recall can vary during the preservation process." },
+        { "speaker": "PROTAGONIST", "text": "So I might remember things later?" },
+        { "speaker": "ASSESSOR", "text": "That is possible." },
+        { "speaker": "PROTAGONIST", "text": "Good. There are a few things I'd like to remember." },
+        { "speaker": "ASSESSOR", "text": "Understood. Let us continue." }
+      ],
+      "next": "q2"
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "act": "I",
+      "title": "The Memory Worth Keeping",
+      "question": { "speaker": "ASSESSOR", "text": "These images represent different types of experiences. Which would you consider most valuable to preserve?" },
+      "choices": [
+        { "id": "A", "text": "The clock repair. It represents a skill that could be passed on." },
+        { "id": "B", "text": "The embrace. Some experiences matter because of the people involved." },
+        { "id": "C", "text": "The diagram. Knowledge can benefit many people." },
+        { "id": "D", "text": "The damaged badge. Even unpleasant experiences may be worth remembering." }
+      ],
+      "post": [
+        { "speaker": "PROTAGONIST", "text": "Are these from real people's memories?" },
+        { "speaker": "ASSESSOR", "text": "They are anonymised samples." },
+        { "speaker": "PROTAGONIST", "text": "Even the badge?" },
+        { "speaker": "ASSESSOR", "text": "Yes." },
+        { "speaker": "PROTAGONIST", "text": "I feel like I've seen that before." },
+        { "speaker": "ASSESSOR", "text": "Familiarity has been noted. Would you like to elaborate?" },
+        { "speaker": "PROTAGONIST", "text": "No. I can't place it." },
+        { "speaker": "ASSESSOR", "text": "That is acceptable. We will proceed." }
+      ],
+      "next": "q3"
+    }
+  ]
+}

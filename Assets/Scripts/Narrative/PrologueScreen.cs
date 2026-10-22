@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -62,20 +61,10 @@ public class PrologueScreen : MonoBehaviour
             c.a = 0.55f + 0.45f * Mathf.Sin(Time.time * 2f);
             continueIndicator.color = c;
         }
-        if (!ContinuePressed()) return;
+        if (!AdvanceInput.Pressed()) return;
 
         if (!revealed) RevealAll();
         else StartCoroutine(Leave());
-    }
-
-    static bool ContinuePressed()
-    {
-        var keyboard = Keyboard.current;
-        var mouse = Mouse.current;
-        var pad = Gamepad.current;
-        return (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame))
-            || (mouse != null && mouse.leftButton.wasPressedThisFrame)
-            || (pad != null && pad.buttonSouth.wasPressedThisFrame);
     }
 
     void RevealAll()

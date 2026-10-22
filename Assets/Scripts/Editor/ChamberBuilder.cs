@@ -17,6 +17,7 @@ public static class ChamberBuilder
     const string ProfilePath = "Assets/Settings/ChamberVolumeProfile.asset";
     const string BuildRoot = "Chamber_Build";
     const string UiRoot = "Assessment_UI";
+    const string ScriptDataPath = "Assets/Narrative/Data/AssessmentScript.json";
 
     // Camera and room anchors (metres). Back wall inner face is z = 4.7, glass at z = 4.85.
     // Level camera at seated eye height: sill lands at ~46% of frame height, desk top at ~55%.
@@ -63,6 +64,27 @@ public static class ChamberBuilder
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
         Debug.Log("ChamberBuilder: Assessment chamber built and scene saved.");
+    }
+
+    // Rebuilds only the UI canvas and EventSystem; chamber geometry, lights and materials are untouched.
+    [MenuItem("The Last Assessment/Rebuild Assessment UI Only")]
+    public static void RebuildUi()
+    {
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != "Assets/Scenes/AssessmentChamber.unity")
+        {
+            Debug.LogError("ChamberBuilder: open AssessmentChamber before rebuilding its UI.");
+            return;
+        }
+        foreach (var name in new[] { UiRoot, "EventSystem" })
+        {
+            var old = GameObject.Find(name);
+            if (old) Object.DestroyImmediate(old);
+        }
+        BuildUi();
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("ChamberBuilder: Assessment UI rebuilt and scene saved.");
     }
 
     // ---------- Materials ----------
@@ -673,10 +695,18 @@ public static class ChamberBuilder
         // Bottom-left translucent dialogue panel.
         var dialogue = Rect("Dialogue_Panel", canvas, new(0f, 0f), new(0f, 0f), new(36f, 48f), new(1338f, 162f));
         Panel(dialogue, PanelFill);
-        Text("Speaker_Label", dialogue, "ASSESSOR", 15f, LabelGrey, new(72f, -28f), new(300f, 22f), 16f);
+        var speaker = Text("Speaker_Label", dialogue, "ASSESSOR", 15f, LabelGrey, new(72f, -28f), new(300f, 22f), 16f);
         var body = Text("Dialogue_Body", dialogue, string.Empty, 27f, TextWhite, new(72f, -58f), new(1180f, 90f), 0.5f);
         body.lineSpacing = 14f;
-        Text("Continue_Indicator", dialogue, "▼", 14f, LabelGrey, new(1300f, -134f), new(20f, 20f));
+        var indicator = Text("Continue_Indicator", dialogue, "▼", 14f, LabelGrey, new(1300f, -134f), new(20f, 20f));
+
+        // On-screen system text from the script (e.g. "PRELIMINARY VALUATION: 143 CREDITS"), shown as a caption.
+        var captionRect = Rect("System_Caption", canvas, new(0.5f, 1f), new(0.5f, 1f), new(0f, -150f), new(640f, 54f));
+        Panel(captionRect, new Color(0.035f, 0.047f, 0.063f, 0.6f));
+        var captionGroup = captionRect.gameObject.AddComponent<CanvasGroup>();
+        captionGroup.alpha = 0f;
+        captionGroup.blocksRaycasts = false;
+        var captionText = Text("Caption_Text", captionRect, string.Empty, 18f, TextWhite, new(0f, -15f), new(640f, 26f), 8f, TextAlignmentOptions.Top);
 
         // Right-hand stacked responses.
         var choices = Rect("Choices_Panel", canvas, new(1f, 0f), new(1f, 0f), new(-32f, 48f), new(514f, 0f));
@@ -715,23 +745,23 @@ public static class ChamberBuilder
         var fadeGroup = fade.gameObject.AddComponent<CanvasGroup>();
         fadeGroup.alpha = 0f; // visible in the editor; the controller starts it at black in play mode
 
-        var director = canvasGo.AddComponent<Scene01Dialogue>();
+        var director = canvasGo.AddComponent<AssessmentDirector>();
         var so = new SerializedObject(director);
+        so.FindProperty("scriptAsset").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TextAsset>(ScriptDataPath);
         so.FindProperty("fade").objectReferenceValue = fadeGroup;
+        so.FindProperty("speakerLabel").objectReferenceValue = speaker;
         so.FindProperty("body").objectReferenceValue = body;
+        so.FindProperty("continueIndicator").objectReferenceValue = indicator;
+        so.FindProperty("captionGroup").objectReferenceValue = captionGroup;
+        so.FindProperty("caption").objectReferenceValue = captionText;
+        so.FindProperty("choicesPanel").objectReferenceValue = choices.gameObject;
         var arr = so.FindProperty("buttons");
         arr.arraySize = buttons.Length;
         for (int i = 0; i < buttons.Length; i++) arr.GetArrayElementAtIndex(i).objectReferenceValue = buttons[i];
         so.ApplyModifiedPropertiesWithoutUndo();
 
-        // Editor preview of the opening state so the Game View shows the composed frame.
-        body.text = "Consciousness recovery successful.\nWelcome to Eterna Continuity Processing.";
-        string[] preview = { "Where am I?", "Who are you?", "What is this place?" };
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            buttons[i].gameObject.SetActive(i < preview.Length);
-            if (i < preview.Length) buttons[i].label.text = preview[i];
-            buttons[i].SetHighlighted(i == 0);
-        }
+        // Editor preview: the script's first line; choices stay hidden until a question is asked.
+        body.text = "Welcome. Your death has been confirmed, and your memories have been preserved for evaluation.";
+        choices.gameObject.SetActive(false);
     }
 }
