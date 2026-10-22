@@ -154,7 +154,7 @@ public static class ChamberBuilder
         return mat;
     }
 
-    static Color Hex(string hex) => ColorUtility.TryParseHtmlString(hex, out var c) ? c : Color.magenta;
+    internal static Color Hex(string hex) => ColorUtility.TryParseHtmlString(hex, out var c) ? c : Color.magenta;
 
     // ---------- Geometry helpers ----------
 
@@ -587,11 +587,11 @@ public static class ChamberBuilder
     // ---------- UI ----------
 
     static readonly Color PanelFill = new(0.035f, 0.047f, 0.063f, 0.78f);
-    static readonly Color PanelBorder = new(1f, 1f, 1f, 0.14f);
-    static readonly Color LabelGrey = Hex("#9AA3AB");
-    static readonly Color TextWhite = Hex("#E8EAEC");
+    internal static readonly Color PanelBorder = new(1f, 1f, 1f, 0.14f);
+    internal static readonly Color LabelGrey = Hex("#9AA3AB");
+    internal static readonly Color TextWhite = Hex("#E8EAEC");
 
-    static RectTransform Rect(string name, Transform parent, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size)
+    internal static RectTransform Rect(string name, Transform parent, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size)
     {
         var rt = new GameObject(name, typeof(RectTransform)).GetComponent<RectTransform>();
         rt.SetParent(parent, false);

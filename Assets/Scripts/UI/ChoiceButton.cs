@@ -11,7 +11,7 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler, IPo
     public TMP_Text label;
     public TMP_Text chevron;
 
-    static readonly Color Cyan = new(0.247f, 0.722f, 0.910f, 1f);
+    public static readonly Color Cyan = new(0.247f, 0.722f, 0.910f, 1f);
     static readonly Color IdleBorder = new(1f, 1f, 1f, 0.15f);
     static readonly Color IdleFill = new(0.039f, 0.051f, 0.067f, 0.55f);
     static readonly Color SelectedFill = new(0.055f, 0.141f, 0.2f, 0.85f);
