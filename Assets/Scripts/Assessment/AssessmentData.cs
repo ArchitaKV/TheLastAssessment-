@@ -7,11 +7,15 @@ using UnityEngine;
 [Serializable]
 public class ScriptLine
 {
-    public string speaker; // ASSESSOR, PROTAGONIST, VOICE, ...; empty for captions
+    public string speaker; // ASSESSOR, PROTAGONIST, VOICE, ...; empty for captions and visuals
     public string text;
     public string caption; // on-screen system text, e.g. "PRELIMINARY VALUATION: 143 CREDITS"
+    public string visual;  // id of a scripted visual event, handled by AssessmentPresentation
+    public string setFlag; // optional flag recorded when this line is reached
 
     public bool IsCaption => !string.IsNullOrEmpty(caption);
+    public bool IsVisual => !string.IsNullOrEmpty(visual);
+    public bool IsDialogue => !IsCaption && !IsVisual;
 }
 
 [Serializable]
@@ -19,6 +23,7 @@ public class ScriptChoice
 {
     public string id; // A–D
     public string text;
+    public string[] setFlags; // optional flags recorded when this choice is picked (e.g. Q12 heard / retained)
 }
 
 [Serializable]
@@ -62,7 +67,7 @@ public class AssessmentData
     }
 
     // Structural checks only; returns human-readable problems (empty list = valid).
-    public List<string> Validate(int maxChoices)
+    public List<string> Validate(int maxChoices, Func<string, bool> isKnownVisual)
     {
         var problems = new List<string>();
         var seen = new HashSet<string>();
@@ -74,8 +79,12 @@ public class AssessmentData
             if (node.choices != null && node.choices.Length > maxChoices)
                 problems.Add($"'{node.id}' has {node.choices.Length} choices; UI supports {maxChoices}");
             foreach (var line in Lines(node))
-                if (!line.IsCaption && (string.IsNullOrEmpty(line.speaker) || string.IsNullOrEmpty(line.text)))
+            {
+                if (line.IsVisual && !isKnownVisual(line.visual))
+                    problems.Add($"'{node.id}' uses unknown visual '{line.visual}'");
+                if (line.IsDialogue && (string.IsNullOrEmpty(line.speaker) || string.IsNullOrEmpty(line.text)))
                     problems.Add($"'{node.id}' has a line without speaker or text");
+            }
         }
         return problems;
     }

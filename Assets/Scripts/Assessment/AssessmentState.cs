@@ -38,7 +38,16 @@ public class AssessmentState
 
     public static string SavePath => Path.Combine(Application.persistentDataPath, "assessment_save.json");
 
+    public static bool SaveExists => File.Exists(SavePath);
+
     public void Save() => File.WriteAllText(SavePath, JsonUtility.ToJson(this, true));
+
+    // A save can only be continued if it points at a question that is authored in the current data.
+    public static AssessmentState LoadResumable(AssessmentData data)
+    {
+        var state = Load();
+        return state != null && data.TryGetNode(state.currentNode, out _) ? state : null;
+    }
 
     public static AssessmentState Load()
     {

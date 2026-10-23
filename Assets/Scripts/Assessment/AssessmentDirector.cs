@@ -2,28 +2,28 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// Plays the assessment in the chamber: dialogue lines one press at a time, captions for on-screen
-// system text, A–D choices for questions. Records answers and autosaves at each node.
-// Story text comes only from the narrative data asset.
+// Plays the assessment in the chamber: dialogue lines one press at a time, captions and scripted
+// visual events via AssessmentPresentation, A–D choices for questions. Records answers and flags,
+// and autosaves at each node. Story text comes only from the narrative data asset.
 public class AssessmentDirector : MonoBehaviour
 {
     [SerializeField] TextAsset scriptAsset;
+    [SerializeField] AssessmentPresentation presentation;
     [SerializeField] bool resumeFromSave = true;
+    [SerializeField] string titleScene = "Prologue";
 
-    [Header("Opening fade")]
+    [Header("Fades")]
     [SerializeField] CanvasGroup fade;
     [SerializeField] float fadeSeconds = 3f;
+    [SerializeField] float exitFadeSeconds = 1.5f;
 
     [Header("Dialogue panel")]
     [SerializeField] TMP_Text speakerLabel;
     [SerializeField] TMP_Text body;
     [SerializeField] Graphic continueIndicator;
-
-    [Header("Caption")]
-    [SerializeField] CanvasGroup captionGroup;
-    [SerializeField] TMP_Text caption;
 
     [Header("Choices")]
     [SerializeField] GameObject choicesPanel;
@@ -36,29 +36,25 @@ public class AssessmentDirector : MonoBehaviour
     public bool Finished { get; private set; }
 
     AssessmentData data;
-    string chosen;
+    ScriptChoice chosen;
 
     IEnumerator Start()
     {
         data = AssessmentData.Parse(scriptAsset.text);
-        foreach (var problem in data.Validate(buttons.Length))
+        foreach (var problem in data.Validate(buttons.Length, presentation.IsKnown))
             Debug.LogError($"AssessmentScript: {problem}");
 
-        State = (resumeFromSave ? AssessmentState.Load() : null) ?? new AssessmentState();
-        if (string.IsNullOrEmpty(State.currentNode)) State.currentNode = data.startNode;
+        // Only a save that points at an authored question is resumed; anything else starts fresh.
+        State = (resumeFromSave ? AssessmentState.LoadResumable(data) : null) ?? new AssessmentState { currentNode = data.startNode };
 
         body.text = string.Empty;
         speakerLabel.text = string.Empty;
         ShowChoices(null);
-        SetCaption(null);
+        presentation.ResetForNode();
+        presentation.Restore(State);
         continueIndicator.enabled = false;
 
-        for (float t = 0f; t < fadeSeconds; t += Time.deltaTime)
-        {
-            fade.alpha = 1f - t / fadeSeconds;
-            yield return null;
-        }
-        fade.alpha = 0f;
+        yield return Fade(1f, 0f, fadeSeconds);
         fade.blocksRaycasts = false;
 
         yield return Run(State.currentNode);
@@ -70,7 +66,7 @@ public class AssessmentDirector : MonoBehaviour
         {
             State.currentNode = node.id;
             State.Save();
-            SetCaption(null);
+            presentation.ResetForNode();
 
             yield return PlayLines(node.pre);
             if (node.HasQuestion)
@@ -78,19 +74,25 @@ public class AssessmentDirector : MonoBehaviour
                 Show(node.question);
                 continueIndicator.enabled = false;
                 yield return AwaitChoice(node);
-                State.RecordAnswer(node.id, chosen);
+                State.RecordAnswer(node.id, chosen.id);
+                if (chosen.setFlags != null)
+                    foreach (var flag in chosen.setFlags) State.SetFlag(flag);
+                State.Save();
                 yield return PlayLines(node.post);
             }
             nodeId = node.next;
         }
 
-        // End of authored content: keep the last line on screen, nothing invented.
+        // End of authored content: save the position, then return to the title screen (no invented text).
         State.currentNode = nodeId;
         State.Save();
         continueIndicator.enabled = false;
         Finished = true;
         if (!string.IsNullOrEmpty(nodeId))
-            Debug.Log($"AssessmentDirector: node '{nodeId}' is not authored yet; stopping here.");
+            Debug.Log($"AssessmentDirector: node '{nodeId}' is not authored yet; returning to the title screen.");
+        fade.blocksRaycasts = true;
+        yield return Fade(0f, 1f, exitFadeSeconds);
+        SceneManager.LoadScene(titleScene);
     }
 
     IEnumerator PlayLines(ScriptLine[] lines)
@@ -98,9 +100,15 @@ public class AssessmentDirector : MonoBehaviour
         if (lines == null) yield break;
         foreach (var line in lines)
         {
+            if (!string.IsNullOrEmpty(line.setFlag)) State.SetFlag(line.setFlag);
             if (line.IsCaption)
             {
-                SetCaption(line.caption); // stays up for the rest of this node
+                presentation.SetCaption(line.caption); // stays up for the rest of this node
+                continue;
+            }
+            if (line.IsVisual)
+            {
+                presentation.Play(line.visual);
                 continue;
             }
             Show(line);
@@ -148,15 +156,19 @@ public class AssessmentDirector : MonoBehaviour
             button.GetComponent<LayoutElement>().preferredHeight = Mathf.Max(minChoiceHeight, textHeight + choicePadding);
             var uiButton = button.GetComponent<Button>();
             uiButton.onClick.RemoveAllListeners();
-            uiButton.onClick.AddListener(() => chosen = choice.id);
+            uiButton.onClick.AddListener(() => chosen = choice);
         }
         if (choices != null && choices.Length > 0)
             EventSystem.current.SetSelectedGameObject(buttons[0].gameObject);
     }
 
-    void SetCaption(string text)
+    IEnumerator Fade(float from, float to, float seconds)
     {
-        caption.text = text ?? string.Empty;
-        captionGroup.alpha = string.IsNullOrEmpty(text) ? 0f : 1f;
+        for (float t = 0f; t < seconds; t += Time.deltaTime)
+        {
+            fade.alpha = Mathf.Lerp(from, to, t / seconds);
+            yield return null;
+        }
+        fade.alpha = to;
     }
 }

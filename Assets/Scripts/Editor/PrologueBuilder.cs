@@ -80,19 +80,23 @@ public static class PrologueBuilder
         var closingStage = Stage("Stage_Closing", canvas);
         var closing = Label("Closing", closingStage, Closing, 18f, MutedText, -812f, 900f, 30f, spacing: 3f);
 
-        // Continue prompt with the only cyan accent on screen.
-        var prompt = ChamberBuilder.Rect("Continue_Prompt", canvas, new(0.5f, 0f), new(0.5f, 0f), new(0f, 52f), new(220f, 28f));
-        var promptGroup = prompt.gameObject.AddComponent<CanvasGroup>();
-        var indicator = ChamberBuilder.Rect("Continue_Indicator", prompt, new(0f, 0.5f), new(0f, 0.5f), new(46f, 0f), new(2f, 16f)).gameObject.AddComponent<Image>();
-        indicator.color = ChoiceButton.Cyan;
-        indicator.raycastTarget = false;
-        var promptText = ChamberBuilder.Rect("Continue_Label", prompt, new(0f, 0.5f), new(0f, 0.5f), new(60f, 0f), new(160f, 28f)).gameObject.AddComponent<TextMeshProUGUI>();
-        promptText.text = "CONTINUE";
-        promptText.fontSize = 14f;
-        promptText.characterSpacing = 20f;
-        promptText.color = ChamberBuilder.LabelGrey;
-        promptText.alignment = TextAlignmentOptions.MidlineLeft;
-        promptText.raycastTarget = false;
+        new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
+
+        // NEW GAME / CONTINUE in the chamber's response-button style (cyan only on the selection).
+        var menu = ButtonRow("Menu", canvas, new(0f, 40f));
+        var newGame = MenuButton("New_Game", menu, "NEW GAME");
+        var resume = MenuButton("Continue", menu, "CONTINUE");
+
+        // Start-over confirmation (system UI, not story dialogue).
+        var confirm = Stretch("Confirm_Dialog", canvas);
+        confirm.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
+        var confirmGroup = confirm.gameObject.AddComponent<CanvasGroup>();
+        var dialog = ChamberBuilder.Rect("Confirm_Panel", confirm, new(0.5f, 0.5f), new(0.5f, 0.5f), Vector2.zero, new(660f, 200f));
+        ChamberBuilder.Panel(dialog, new Color(0.035f, 0.047f, 0.063f, 0.95f));
+        Label("Confirm_Text", dialog, "Start a new assessment? Your saved progress will be lost.", 20f, ChamberBuilder.TextWhite, -40f, 600f, 30f);
+        var confirmRow = ButtonRow("Confirm_Buttons", dialog, new(0f, 30f));
+        var startOver = MenuButton("Start_Over", confirmRow, "START OVER");
+        var cancel = MenuButton("Cancel", confirmRow, "CANCEL");
 
         // Exit fade to black (above everything).
         var exit = Stretch("Exit_Fade", canvas);
@@ -123,9 +127,14 @@ public static class PrologueBuilder
             for (int j = 0; j < stageSpecs[i].texts.Length; j++)
                 texts.GetArrayElementAtIndex(j).objectReferenceValue = stageSpecs[i].texts[j];
         }
-        so.FindProperty("continuePrompt").objectReferenceValue = promptGroup;
-        so.FindProperty("continueIndicator").objectReferenceValue = indicator;
         so.FindProperty("exitFade").objectReferenceValue = exitGroup;
+        so.FindProperty("scriptAsset").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Narrative/Data/AssessmentScript.json");
+        so.FindProperty("menu").objectReferenceValue = menu.GetComponent<CanvasGroup>();
+        so.FindProperty("newGameButton").objectReferenceValue = newGame;
+        so.FindProperty("continueButton").objectReferenceValue = resume;
+        so.FindProperty("confirm").objectReferenceValue = confirmGroup;
+        so.FindProperty("confirmButton").objectReferenceValue = startOver;
+        so.FindProperty("cancelButton").objectReferenceValue = cancel;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -136,6 +145,26 @@ public static class PrologueBuilder
             .Concat(others).ToArray();
 
         Debug.Log("PrologueBuilder: Prologue scene built, saved and placed first in Build Settings.");
+    }
+
+    static RectTransform ButtonRow(string name, Transform parent, Vector2 bottomOffset)
+    {
+        var row = ChamberBuilder.Rect(name, parent, new(0.5f, 0f), new(0.5f, 0f), bottomOffset, new(540f, 52f));
+        var layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+        layout.spacing = 28f;
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.childControlWidth = layout.childControlHeight = false;
+        row.gameObject.AddComponent<CanvasGroup>();
+        return row;
+    }
+
+    static ChoiceButton MenuButton(string name, Transform parent, string text)
+    {
+        var button = ChamberBuilder.MakeChoiceButton(name, parent, new(256f, 52f), text);
+        button.label.fontSize = 16f;
+        button.label.characterSpacing = 12f;
+        button.label.rectTransform.anchoredPosition = new(28f, -16f);
+        return button;
     }
 
     static RectTransform Stretch(string name, Transform parent)

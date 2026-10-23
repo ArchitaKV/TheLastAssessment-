@@ -25,7 +25,12 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler, IPo
     public void OnDeselect(BaseEventData _) => SetHighlighted(false);
 
     // Hover moves keyboard/controller selection too, so only one button is ever highlighted.
-    public void OnPointerEnter(PointerEventData _) => EventSystem.current.SetSelectedGameObject(gameObject);
+    public void OnPointerEnter(PointerEventData _)
+    {
+        var selectable = GetComponent<Selectable>();
+        if (selectable && !selectable.IsInteractable()) return; // disabled options never take the cyan highlight
+        EventSystem.current.SetSelectedGameObject(gameObject);
+    }
 
     public void SetHighlighted(bool selected)
     {

@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// Prologue: each section fades in and its text types out letter by letter, then fade to black into
-// the assessment chamber. First press reveals everything at once; the next press continues.
+// Title / prologue: each section fades in and its text types out letter by letter, then the
+// NEW GAME / CONTINUE menu appears. First press during the reveal shows everything at once.
 public class PrologueScreen : MonoBehaviour
 {
     [Serializable]
@@ -18,8 +20,6 @@ public class PrologueScreen : MonoBehaviour
     }
 
     [SerializeField] Stage[] stages;
-    [SerializeField] CanvasGroup continuePrompt;
-    [SerializeField] Graphic continueIndicator;
     [SerializeField] CanvasGroup exitFade;
     [SerializeField] string nextScene = "AssessmentChamber";
     [SerializeField] float groupFadeSeconds = 0.6f;
@@ -28,7 +28,18 @@ public class PrologueScreen : MonoBehaviour
     [SerializeField] float commaPause = 0.08f;
     [SerializeField] float exitFadeSeconds = 1.5f;
 
-    bool revealed, leaving;
+    [Header("Menu")]
+    [SerializeField] TextAsset scriptAsset;
+    [SerializeField] CanvasGroup menu;
+    [SerializeField] ChoiceButton newGameButton;
+    [SerializeField] ChoiceButton continueButton;
+
+    [Header("Start-over confirmation")]
+    [SerializeField] CanvasGroup confirm;
+    [SerializeField] ChoiceButton confirmButton;
+    [SerializeField] ChoiceButton cancelButton;
+
+    bool revealed, leaving, canContinue;
 
     IEnumerator Start()
     {
@@ -37,8 +48,10 @@ public class PrologueScreen : MonoBehaviour
             stage.group.alpha = 0f;
             foreach (var text in stage.texts) text.maxVisibleCharacters = 0;
         }
-        continuePrompt.alpha = 0f;
         exitFade.alpha = 0f;
+        SetGroup(menu, false);
+        SetGroup(confirm, false);
+        WireMenu();
 
         foreach (var stage in stages)
         {
@@ -48,34 +61,89 @@ public class PrologueScreen : MonoBehaviour
             yield return Wait(stageGapSeconds);
             if (revealed) yield break;
         }
-        yield return Fade(continuePrompt, 1f, groupFadeSeconds);
-        revealed = true;
+        RevealAll();
+    }
+
+    void WireMenu()
+    {
+        // Continue only resumes a save that points at an authored question; a stale save never leads to a blank screen.
+        canContinue = AssessmentState.LoadResumable(AssessmentData.Parse(scriptAsset.text)) != null;
+        var continueUi = continueButton.GetComponent<Button>();
+        continueUi.interactable = canContinue;
+        if (!canContinue)
+        {
+            continueButton.label.alpha = 0.35f;
+            continueButton.chevron.alpha = 0.35f;
+        }
+
+        newGameButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            if (AssessmentState.SaveExists) OpenConfirm();
+            else StartNewAssessment();
+        });
+        continueUi.onClick.AddListener(() => StartCoroutine(Leave()));
+        confirmButton.GetComponent<Button>().onClick.AddListener(StartNewAssessment);
+        cancelButton.GetComponent<Button>().onClick.AddListener(CloseConfirm);
     }
 
     void Update()
     {
         if (leaving) return;
-        if (revealed && continueIndicator)
+        if (!revealed)
         {
-            var c = continueIndicator.color;
-            c.a = 0.55f + 0.45f * Mathf.Sin(Time.time * 2f);
-            continueIndicator.color = c;
+            if (AdvanceInput.Pressed()) RevealAll();
+            return;
         }
-        if (!AdvanceInput.Pressed()) return;
-
-        if (!revealed) RevealAll();
-        else StartCoroutine(Leave());
+        if (confirm.interactable && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            CloseConfirm();
     }
 
     void RevealAll()
     {
+        if (revealed) return;
         revealed = true;
         foreach (var stage in stages)
         {
             stage.group.alpha = 1f;
             foreach (var text in stage.texts) text.maxVisibleCharacters = int.MaxValue;
         }
-        continuePrompt.alpha = 1f;
+        SetGroup(menu, true);
+        // Select next frame so the press that revealed the menu cannot also activate a button.
+        StartCoroutine(SelectNextFrame(canContinue ? continueButton : newGameButton));
+    }
+
+    void OpenConfirm()
+    {
+        SetGroup(menu, false, keepVisible: true);
+        SetGroup(confirm, true);
+        StartCoroutine(SelectNextFrame(cancelButton)); // safe default
+    }
+
+    void CloseConfirm()
+    {
+        SetGroup(confirm, false);
+        SetGroup(menu, true);
+        StartCoroutine(SelectNextFrame(newGameButton));
+    }
+
+    void StartNewAssessment()
+    {
+        AssessmentState.DeleteSave();
+        StartCoroutine(Leave());
+    }
+
+    IEnumerator SelectNextFrame(ChoiceButton button)
+    {
+        EventSystem.current.SetSelectedGameObject(null);
+        yield return null;
+        EventSystem.current.SetSelectedGameObject(button.gameObject);
+    }
+
+    static void SetGroup(CanvasGroup group, bool active, bool keepVisible = false)
+    {
+        group.alpha = active || keepVisible ? 1f : 0f;
+        group.interactable = active;
+        group.blocksRaycasts = active;
     }
 
     // Letter-by-letter reveal with short beats after punctuation. Time-based, so speed is
@@ -114,7 +182,9 @@ public class PrologueScreen : MonoBehaviour
 
     IEnumerator Leave()
     {
+        if (leaving) yield break;
         leaving = true;
+        SetGroup(menu, false, keepVisible: true);
         exitFade.blocksRaycasts = true;
         yield return Fade(exitFade, 1f, exitFadeSeconds, skippable: false);
         SceneManager.LoadScene(nextScene);

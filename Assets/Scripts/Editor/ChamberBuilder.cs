@@ -1,3 +1,4 @@
+using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -18,6 +19,7 @@ public static class ChamberBuilder
     const string BuildRoot = "Chamber_Build";
     const string UiRoot = "Assessment_UI";
     const string ScriptDataPath = "Assets/Narrative/Data/AssessmentScript.json";
+    const string ReconstructionRoot = "Reconstructions";
 
     // Camera and room anchors (metres). Back wall inner face is z = 4.7, glass at z = 4.85.
     // Level camera at seated eye height: sill lands at ~46% of frame height, desk top at ~55%.
@@ -45,7 +47,7 @@ public static class ChamberBuilder
             AssetDatabase.CreateFolder("Assets/Art/Materials", "Chamber");
 
         var m = new Mats();
-        foreach (var name in new[] { BuildRoot, UiRoot, "EventSystem" })
+        foreach (var name in new[] { BuildRoot, UiRoot, "EventSystem", ReconstructionRoot })
         {
             var old = GameObject.Find(name);
             if (old) Object.DestroyImmediate(old);
@@ -58,6 +60,7 @@ public static class ChamberBuilder
         BuildProps(root, m);
         BuildLighting(root);
         BuildCamera();
+        BuildReconstructions(m);
         BuildUi();
 
         AssetDatabase.SaveAssets();
@@ -85,6 +88,102 @@ public static class ChamberBuilder
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         Debug.Log("ChamberBuilder: Assessment UI rebuilt and scene saved.");
+    }
+
+    // Rebuilds the memory-reconstruction set and its display, then the UI that references them.
+    [MenuItem("The Last Assessment/Rebuild Reconstruction Set Only")]
+    public static void RebuildReconstructions()
+    {
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != "Assets/Scenes/AssessmentChamber.unity")
+        {
+            Debug.LogError("ChamberBuilder: open AssessmentChamber before rebuilding its reconstruction set.");
+            return;
+        }
+        var old = GameObject.Find(ReconstructionRoot);
+        if (old) Object.DestroyImmediate(old);
+        BuildReconstructions(new Mats());
+        RebuildUi();
+    }
+
+    // ---------- Memory reconstructions (Q7) ----------
+    // Built far from the chamber and filmed by its own camera; the image is shown on a display
+    // just behind the observation glass, so the approved chamber geometry is never altered.
+
+    static readonly Vector3 OfficeOrigin = new(0f, 0f, 60f);
+
+    static void BuildReconstructions(Mats m)
+    {
+        var root = new GameObject(ReconstructionRoot).transform;
+
+        float w = WindowHalfWidth * 2f - 0.06f, h = WindowTopY - SillY - 0.06f;
+        var display = Prim(PrimitiveType.Quad, "Reconstruction_Display", root, new(0f, (SillY + WindowTopY) * 0.5f, 4.9f), new(w, h, 1f), m.Display);
+        display.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
+        display.SetActive(false);
+
+        var office = Group(root, "Reconstruction_Office");
+        office.position = OfficeOrigin;
+        Vector3 O(float x, float y, float z) => OfficeOrigin + new Vector3(x, y, z);
+        Box("Office_Floor", office, O(0f, -0.05f, 3.5f), new(12f, 0.1f, 9f), m.Floor);
+        Box("Office_Wall_Back", office, O(0f, 1.5f, 7.2f), new(12f, 3f, 0.2f), m.OfficeWall);
+        Box("Office_Wall_L", office, O(-5.5f, 1.5f, 3.5f), new(0.2f, 3f, 9f), m.OfficeWall);
+        Box("Office_Wall_R", office, O(5.5f, 1.5f, 3.5f), new(0.2f, 3f, 9f), m.OfficeWall);
+        Box("Office_Window_Band", office, O(0f, 1.75f, 7.08f), new(10f, 1.3f, 0.02f), m.OfficeWindow);
+        for (float x = -4.8f; x <= 4.81f; x += 1.2f)
+            Box("Office_Mullion", office, O(x, 1.75f, 7.06f), new(0.06f, 1.34f, 0.04f), m.Frame);
+
+        foreach (float z in new[] { 1.6f, 3.2f, 4.8f })
+        foreach (float x in new[] { -3f, -1.5f, 0f, 1.5f, 3f })
+        {
+            bool cleared = z < 2f && Mathf.Approximately(x, 0f); // the colleague's desk, front and centre
+            Box("Desk_Top", office, O(x, 0.74f, z), new(1.3f, 0.03f, 0.7f), m.DeskTop);
+            Box("Desk_Pedestal", office, O(x + 0.45f, 0.36f, z), new(0.32f, 0.72f, 0.6f), m.Steel);
+            Box("Desk_Leg", office, O(x - 0.6f, 0.36f, z), new(0.04f, 0.72f, 0.6f), m.Steel);
+            if (cleared)
+            {
+                Box("Cleared_Desk_Mark", office, O(x - 0.05f, 0.7565f, z + 0.08f), new(0.52f, 0.002f, 0.34f), m.DeskMark);
+                continue;
+            }
+            Box("Monitor", office, O(x - 0.1f, 1.02f, z + 0.22f), new(0.56f, 0.34f, 0.03f), m.Monitor, new(-6f, 0f, 0f));
+            Box("Monitor_Stand", office, O(x - 0.1f, 0.82f, z + 0.25f), new(0.06f, 0.14f, 0.06f), m.Steel);
+            Box("Papers", office, O(x + 0.25f, 0.765f, z - 0.1f), new(0.22f, 0.02f, 0.3f), m.Paper, new(0f, 12f, 0f));
+            Box("Chair_Seat", office, O(x - 0.1f, 0.48f, z - 0.55f), new(0.46f, 0.06f, 0.44f), m.LampMetal);
+            Box("Chair_Back", office, O(x - 0.1f, 0.78f, z - 0.78f), new(0.46f, 0.5f, 0.05f), m.LampMetal);
+        }
+
+        foreach (float z in new[] { 1.2f, 3.4f, 5.6f })
+        {
+            var light = new GameObject("Office_Light").AddComponent<Light>();
+            light.transform.SetParent(office, false);
+            light.transform.position = O(0f, 2.8f, z);
+            light.type = LightType.Point;
+            light.color = Mathf.CorrelatedColorTemperatureToRGB(6000f);
+            light.intensity = 5f;
+            light.range = 7f;
+        }
+
+        var camGo = new GameObject("Reconstruction_Camera", typeof(Camera));
+        camGo.transform.SetParent(root, false);
+        camGo.transform.SetPositionAndRotation(O(0f, 1.95f, -2.3f), Quaternion.Euler(13f, 0f, 0f));
+        var cam = camGo.GetComponent<Camera>();
+        cam.fieldOfView = 26f;
+        cam.nearClipPlane = 0.05f;
+        cam.farClipPlane = 30f;
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = Hex("#0B0E11");
+        cam.GetUniversalAdditionalCameraData().renderPostProcessing = false;
+        cam.enabled = false;
+    }
+
+    static GameObject FindInactive(string rootName, string childName) =>
+        GameObject.Find(rootName).GetComponentsInChildren<Transform>(true).First(t => t.name == childName).gameObject;
+
+    internal static RectTransform Stretch(string name, Transform parent)
+    {
+        var rt = Rect(name, parent, Vector2.zero, new(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        return rt;
     }
 
     // ---------- Materials ----------
@@ -117,6 +216,27 @@ public static class ChamberBuilder
         public readonly Material Console = Lit("Observation_Console", "#16191C", 0.45f);
         public readonly Material Monitor = Lit("Observation_Monitor", "#080B0D", 0.85f, 0f, Hex("#3A5664") * 0.1f);
         public readonly Material Silhouette = Lit("Silhouette_Lit", "#0B0C0E", 0.35f);
+        public readonly Material OfficeWall = Lit("Office_Wall", "#3A3F45", 0.3f);
+        public readonly Material OfficeWindow = Lit("Office_Window", "#9FB3C2", 0.2f, 0f, Hex("#9FB3C2") * 0.5f);
+        public readonly Material DeskMark = Lit("Office_Desk_Mark", "#E6E3DC", 0.15f);
+        public readonly Material Display = DisplayMat();
+    }
+
+    // Transparent unlit screen for reconstructions; the runtime fades its alpha and assigns the render texture.
+    static Material DisplayMat()
+    {
+        var mat = Asset("Reconstruction_Display", "Universal Render Pipeline/Unlit");
+        mat.SetColor("_BaseColor", new Color(1f, 1f, 1f, 0f));
+        mat.SetFloat("_Surface", 1f);
+        mat.SetFloat("_Blend", 0f);
+        mat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+        mat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+        mat.SetFloat("_ZWrite", 0f);
+        mat.SetOverrideTag("RenderType", "Transparent");
+        mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+        mat.renderQueue = (int)RenderQueue.Transparent;
+        EditorUtility.SetDirty(mat);
+        return mat;
     }
 
     static Material Asset(string name, string shader)
@@ -624,10 +744,27 @@ public static class ChamberBuilder
         return rt;
     }
 
-    static Image Panel(RectTransform rt, Color fill) => Panel(rt, fill, out _);
+    internal static Image Panel(RectTransform rt, Color fill) => Panel(rt, fill, out _);
+
+    // Thin-bordered response button in the chamber style (cyan only while selected).
+    internal static ChoiceButton MakeChoiceButton(string name, Transform parent, Vector2 size, string text)
+    {
+        var b = Rect(name, parent, new(0f, 1f), new(0f, 1f), Vector2.zero, size);
+        b.gameObject.AddComponent<LayoutElement>().preferredHeight = size.y;
+        var bg = Panel(b, new Color(0.039f, 0.051f, 0.067f, 0.55f), out var edges);
+        var button = b.gameObject.AddComponent<Button>();
+        button.transition = Selectable.Transition.None;
+        button.targetGraphic = bg;
+        var choice = b.gameObject.AddComponent<ChoiceButton>();
+        choice.background = bg;
+        choice.border = edges;
+        choice.label = Text("Label", b, text, 21f, TextWhite, new(28f, -15f), new(size.x - 86f, 28f), 0.5f);
+        choice.chevron = Text("Chevron", b, "›", 30f, TextWhite, new(size.x - 36f, -8f), new(20f, 36f));
+        return choice;
+    }
 
     // Translucent fill plus four 1px edge strips (an Outline effect would tint the fill itself).
-    static Image Panel(RectTransform rt, Color fill, out Graphic[] edges)
+    internal static Image Panel(RectTransform rt, Color fill, out Graphic[] edges)
     {
         var img = rt.gameObject.AddComponent<Image>();
         img.color = fill;
@@ -720,21 +857,71 @@ public static class ChamberBuilder
 
         var buttons = new ChoiceButton[4];
         for (int i = 0; i < buttons.Length; i++)
+            buttons[i] = MakeChoiceButton($"Choice_{i + 1}", choices, new(466f, 54f), "Response");
+
+        // ----- Scripted visual events (AssessmentPresentation) -----
+
+        // Q3: "The number shrinks into the corner." Valuation panel top-right, mirroring the subject panel.
+        var valuation = Rect("Valuation_Panel", canvas, new(1f, 1f), new(1f, 1f), new(-36f, -56f), new(250f, 82f));
+        Panel(valuation, new Color(0.035f, 0.047f, 0.063f, 0.45f));
+        var valuationGroup = valuation.gameObject.AddComponent<CanvasGroup>();
+        valuationGroup.alpha = 0f;
+        valuationGroup.blocksRaycasts = false;
+        Text("Valuation_Label", valuation, "VALUATION", 13f, LabelGrey, new(26f, -17f), new(200f, 20f), 14f);
+        Text("Valuation_Value", valuation, "143 CREDITS", 24f, TextWhite, new(26f, -38f), new(210f, 32f), 2f);
+        var highlight = Stretch("Valuation_Highlight", valuation).gameObject.AddComponent<Image>();
+        highlight.color = new Color(1f, 1f, 1f, 0f);
+        highlight.raycastTarget = false;
+
+        // Q3: "another figure appears beneath it before vanishing" — an unreadable figure, value not given by the script.
+        var figure = Rect("Second_Figure", canvas, new(1f, 1f), new(1f, 1f), new(-36f, -146f), new(250f, 24f));
+        var figureGroup = figure.gameObject.AddComponent<CanvasGroup>();
+        figureGroup.alpha = 0f;
+        figureGroup.blocksRaycasts = false;
+        var figureBar = Rect("Figure_Glyphs", figure, new(0f, 1f), new(0f, 1f), new(26f, -4f), new(132f, 16f)).gameObject.AddComponent<Image>();
+        figureBar.color = new Color(TextWhite.r, TextWhite.g, TextWhite.b, 0.55f);
+        figureBar.raycastTarget = false;
+
+        // Q4 / Q6: audio waveform shown over the observation window.
+        var wave = Rect("Waveform_Panel", canvas, new(0.5f, 1f), new(0.5f, 0.5f), new(0f, -300f), new(620f, 110f));
+        Panel(wave, new Color(0.035f, 0.047f, 0.063f, 0.55f));
+        var waveGroup = wave.gameObject.AddComponent<CanvasGroup>();
+        waveGroup.alpha = 0f;
+        waveGroup.blocksRaycasts = false;
+        var bars = new RectTransform[56];
+        for (int i = 0; i < bars.Length; i++)
         {
-            var b = Rect($"Choice_{i + 1}", choices, new(0f, 1f), new(0f, 1f), Vector2.zero, new(466f, 54f));
-            b.gameObject.AddComponent<LayoutElement>().preferredHeight = 54f;
-            var bg = Panel(b, new Color(0.039f, 0.051f, 0.067f, 0.55f), out var edges);
-            var button = b.gameObject.AddComponent<Button>();
-            button.transition = Selectable.Transition.None;
-            button.targetGraphic = bg;
-            var label = Text("Label", b, "Response", 21f, TextWhite, new(28f, -15f), new(380f, 28f), 0.5f);
-            var chevron = Text("Chevron", b, "›", 30f, TextWhite, new(430f, -8f), new(20f, 36f));
-            var choice = b.gameObject.AddComponent<ChoiceButton>();
-            choice.background = bg;
-            choice.border = edges;
-            choice.label = label;
-            choice.chevron = chevron;
-            buttons[i] = choice;
+            var bar = Rect($"Bar_{i:00}", wave, new(0.5f, 0.5f), new(0.5f, 0.5f), new((i - (bars.Length - 1) * 0.5f) * 10f, 0f), new(4f, 3f));
+            bar.gameObject.AddComponent<Image>().color = new Color(TextWhite.r, TextWhite.g, TextWhite.b, 0.8f);
+            bars[i] = bar;
+        }
+
+        // Q5: "A short employment summary appears." Fields mirror what the dialogue states; the
+        // colleague's name and project are not given by the script, so they stay unreadable.
+        var summary = Rect("Employment_Summary", canvas, new(0.5f, 1f), new(0.5f, 1f), new(0f, -132f), new(720f, 228f));
+        Panel(summary, PanelFill);
+        var summaryGroup = summary.gameObject.AddComponent<CanvasGroup>();
+        summaryGroup.alpha = 0f;
+        summaryGroup.blocksRaycasts = false;
+        Text("Summary_Header", summary, "EMPLOYMENT SUMMARY", 13f, LabelGrey, new(32f, -24f), new(400f, 20f), 14f);
+        var rule = Rect("Summary_Rule", summary, new(0f, 1f), new(0f, 1f), new(32f, -56f), new(656f, 1f));
+        rule.gameObject.AddComponent<Image>().color = PanelBorder;
+        var rows = new (string label, string value)[] { ("POSITION", "MEMORY AUDITOR"), ("EVALUATIONS", "CONSISTENTLY SATISFACTORY"), ("PROJECT ENTRY", null) };
+        for (int i = 0; i < rows.Length; i++)
+        {
+            float y = -78f - i * 44f;
+            Text($"Summary_Label_{i}", summary, rows[i].label, 13f, LabelGrey, new(32f, y - 4f), new(200f, 20f), 8f);
+            if (rows[i].value != null)
+            {
+                Text($"Summary_Value_{i}", summary, rows[i].value, 18f, TextWhite, new(250f, y), new(440f, 26f), 2f);
+                continue;
+            }
+            foreach (var (x, w, a) in new[] { (250f, 190f, 0.18f), (458f, 132f, 0.45f) })
+            {
+                var redacted = Rect($"Summary_Obscured_{x}", summary, new(0f, 1f), new(0f, 1f), new(x, y - 6f), new(w, 14f)).gameObject.AddComponent<Image>();
+                redacted.color = new Color(TextWhite.r, TextWhite.g, TextWhite.b, a);
+                redacted.raycastTarget = false;
+            }
         }
 
         // Full-screen black for the opening fade from darkness.
@@ -745,15 +932,32 @@ public static class ChamberBuilder
         var fadeGroup = fade.gameObject.AddComponent<CanvasGroup>();
         fadeGroup.alpha = 0f; // visible in the editor; the controller starts it at black in play mode
 
+        // Presentation layer for captions and scripted visual events.
+        if (!GameObject.Find(ReconstructionRoot)) BuildReconstructions(new Mats());
+        var presentation = canvasGo.AddComponent<AssessmentPresentation>();
+        var ps = new SerializedObject(presentation);
+        ps.FindProperty("captionGroup").objectReferenceValue = captionGroup;
+        ps.FindProperty("caption").objectReferenceValue = captionText;
+        ps.FindProperty("cornerValuation").objectReferenceValue = valuationGroup;
+        ps.FindProperty("cornerHighlight").objectReferenceValue = highlight;
+        ps.FindProperty("secondFigure").objectReferenceValue = figureGroup;
+        ps.FindProperty("waveformGroup").objectReferenceValue = waveGroup;
+        var barProp = ps.FindProperty("waveformBars");
+        barProp.arraySize = bars.Length;
+        for (int i = 0; i < bars.Length; i++) barProp.GetArrayElementAtIndex(i).objectReferenceValue = bars[i];
+        ps.FindProperty("employmentSummary").objectReferenceValue = summaryGroup;
+        ps.FindProperty("reconstructionDisplay").objectReferenceValue = FindInactive(ReconstructionRoot, "Reconstruction_Display").GetComponent<Renderer>();
+        ps.FindProperty("reconstructionCamera").objectReferenceValue = FindInactive(ReconstructionRoot, "Reconstruction_Camera").GetComponent<Camera>();
+        ps.ApplyModifiedPropertiesWithoutUndo();
+
         var director = canvasGo.AddComponent<AssessmentDirector>();
         var so = new SerializedObject(director);
         so.FindProperty("scriptAsset").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TextAsset>(ScriptDataPath);
+        so.FindProperty("presentation").objectReferenceValue = presentation;
         so.FindProperty("fade").objectReferenceValue = fadeGroup;
         so.FindProperty("speakerLabel").objectReferenceValue = speaker;
         so.FindProperty("body").objectReferenceValue = body;
         so.FindProperty("continueIndicator").objectReferenceValue = indicator;
-        so.FindProperty("captionGroup").objectReferenceValue = captionGroup;
-        so.FindProperty("caption").objectReferenceValue = captionText;
         so.FindProperty("choicesPanel").objectReferenceValue = choices.gameObject;
         var arr = so.FindProperty("buttons");
         arr.arraySize = buttons.Length;

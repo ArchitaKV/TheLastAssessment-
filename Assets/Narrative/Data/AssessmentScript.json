@@ -7,17 +7,50 @@
       "act": "",
       "title": "Prologue — Post-Death Assessment",
       "pre": [
-        { "speaker": "ASSESSOR", "text": "Welcome. Your death has been confirmed, and your memories have been preserved for evaluation." },
-        { "speaker": "PROTAGONIST", "text": "So… this is what happens after you die?" },
-        { "speaker": "ASSESSOR", "text": "In your case, yes. Before your memories can be processed, we must assess their continuity and integrity." },
-        { "speaker": "PROTAGONIST", "text": "And what happens after that?" },
-        { "speaker": "ASSESSOR", "text": "Your results will determine the next stage." },
-        { "caption": "PRELIMINARY VALUATION: 143 CREDITS" },
-        { "speaker": "PROTAGONIST", "text": "What are credits supposed to mean?" },
-        { "speaker": "ASSESSOR", "text": "Your assessment will clarify your result. Shall we begin?" },
-        { "speaker": "ASSESSOR", "text": "There are twenty questions. Some concern your memories, while others concern your decisions and experiences. Please answer as accurately as you can." },
-        { "speaker": "PROTAGONIST", "text": "And if I can't remember something?" },
-        { "speaker": "ASSESSOR", "text": "Uncertainty is an acceptable response." }
+        {
+          "speaker": "ASSESSOR",
+          "text": "Welcome. Your death has been confirmed, and your memories have been preserved for evaluation."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "So… this is what happens after you die?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "In your case, yes. Before your memories can be processed, we must assess their continuity and integrity."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "And what happens after that?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Your results will determine the next stage."
+        },
+        {
+          "caption": "PRELIMINARY VALUATION: 143 CREDITS",
+          "setFlag": "valuation_143_seen"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "What are credits supposed to mean?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Your assessment will clarify your result. Shall we begin?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "There are twenty questions. Some concern your memories, while others concern your decisions and experiences. Please answer as accurately as you can."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "And if I can't remember something?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Uncertainty is an acceptable response."
+        }
       ],
       "next": "q1"
     },
@@ -26,20 +59,53 @@
       "number": 1,
       "act": "I",
       "title": "Familiarity",
-      "question": { "speaker": "ASSESSOR", "text": "People sometimes recognise places or voices without remembering where they encountered them. Has that happened to you?" },
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "People sometimes recognise places or voices without remembering where they encountered them. Has that happened to you?"
+      },
       "choices": [
-        { "id": "A", "text": "Yes, quite often." },
-        { "id": "B", "text": "Occasionally, but I usually remember eventually." },
-        { "id": "C", "text": "Rarely. I trust what I remember." },
-        { "id": "D", "text": "Lately, more often than I'd like." }
+        {
+          "id": "A",
+          "text": "Yes, quite often."
+        },
+        {
+          "id": "B",
+          "text": "Occasionally, but I usually remember eventually."
+        },
+        {
+          "id": "C",
+          "text": "Rarely. I trust what I remember."
+        },
+        {
+          "id": "D",
+          "text": "Lately, more often than I'd like."
+        }
       ],
       "post": [
-        { "speaker": "PROTAGONIST", "text": "Is that normal after death?" },
-        { "speaker": "ASSESSOR", "text": "Memory recall can vary during the preservation process." },
-        { "speaker": "PROTAGONIST", "text": "So I might remember things later?" },
-        { "speaker": "ASSESSOR", "text": "That is possible." },
-        { "speaker": "PROTAGONIST", "text": "Good. There are a few things I'd like to remember." },
-        { "speaker": "ASSESSOR", "text": "Understood. Let us continue." }
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Is that normal after death?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Memory recall can vary during the preservation process."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "So I might remember things later?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "That is possible."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Good. There are a few things I'd like to remember."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Understood. Let us continue."
+        }
       ],
       "next": "q2"
     },
@@ -48,24 +114,544 @@
       "number": 2,
       "act": "I",
       "title": "The Memory Worth Keeping",
-      "question": { "speaker": "ASSESSOR", "text": "These images represent different types of experiences. Which would you consider most valuable to preserve?" },
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "These images represent different types of experiences. Which would you consider most valuable to preserve?"
+      },
       "choices": [
-        { "id": "A", "text": "The clock repair. It represents a skill that could be passed on." },
-        { "id": "B", "text": "The embrace. Some experiences matter because of the people involved." },
-        { "id": "C", "text": "The diagram. Knowledge can benefit many people." },
-        { "id": "D", "text": "The damaged badge. Even unpleasant experiences may be worth remembering." }
+        {
+          "id": "A",
+          "text": "The clock repair. It represents a skill that could be passed on."
+        },
+        {
+          "id": "B",
+          "text": "The embrace. Some experiences matter because of the people involved."
+        },
+        {
+          "id": "C",
+          "text": "The diagram. Knowledge can benefit many people."
+        },
+        {
+          "id": "D",
+          "text": "The damaged badge. Even unpleasant experiences may be worth remembering."
+        }
       ],
       "post": [
-        { "speaker": "PROTAGONIST", "text": "Are these from real people's memories?" },
-        { "speaker": "ASSESSOR", "text": "They are anonymised samples." },
-        { "speaker": "PROTAGONIST", "text": "Even the badge?" },
-        { "speaker": "ASSESSOR", "text": "Yes." },
-        { "speaker": "PROTAGONIST", "text": "I feel like I've seen that before." },
-        { "speaker": "ASSESSOR", "text": "Familiarity has been noted. Would you like to elaborate?" },
-        { "speaker": "PROTAGONIST", "text": "No. I can't place it." },
-        { "speaker": "ASSESSOR", "text": "That is acceptable. We will proceed." }
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Are these from real people's memories?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "They are anonymised samples."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Even the badge?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Yes."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I feel like I've seen that before."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Familiarity has been noted. Would you like to elaborate?"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "No. I can't place it."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "That is acceptable. We will proceed."
+        }
       ],
       "next": "q3"
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "act": "I",
+      "title": "The Valuation",
+      "pre": [
+        {
+          "caption": "143 CREDITS"
+        }
+      ],
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "Your recorded experiences have been assigned a preliminary value of 143 credits. Comparable profiles typically receive a higher score. How would you interpret this difference?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "My experiences may not have been as significant as I believed."
+        },
+        {
+          "id": "B",
+          "text": "The scoring system may value certain experiences more than others."
+        },
+        {
+          "id": "C",
+          "text": "Something in my record may be missing or incorrectly classified."
+        },
+        {
+          "id": "D",
+          "text": "I would need to understand the criteria before drawing a conclusion."
+        }
+      ],
+      "post": [
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Is that a good score?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "It is below the current average for comparable profiles."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Comparable to mine in what way?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Age, recorded experience, and memory integrity."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I don't remember much about my life. How can you know whether it's comparable?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Your archived records provide information that you may not currently recall."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Right. I suppose that's the point of this."
+        },
+        {
+          "visual": "valuation_to_corner",
+          "setFlag": "valuation_in_corner"
+        },
+        {
+          "visual": "second_figure_flicker",
+          "setFlag": "second_number_glimpsed"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Was there another number?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "No additional value is currently displayed."
+        }
+      ],
+      "next": "q4"
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "act": "I",
+      "title": "An Old Voice",
+      "pre": [
+        {
+          "visual": "waveform_show"
+        }
+      ],
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "Some people remember voices more clearly than faces. Is there a voice from your earlier life that you remember particularly well?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "Someone speaking softly, as though trying not to be heard."
+        },
+        {
+          "id": "B",
+          "text": "Someone calling for me from another room."
+        },
+        {
+          "id": "C",
+          "text": "A voice that feels familiar, though I cannot identify it."
+        },
+        {
+          "id": "D",
+          "text": "No particular voice comes to mind."
+        }
+      ],
+      "post": [
+        {
+          "visual": "waveform_play"
+        },
+        {
+          "speaker": "VOICE",
+          "text": "You promised—",
+          "setFlag": "voice_fragment_heard"
+        },
+        {
+          "visual": "waveform_cut"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "What was that?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "An audio fragment associated with the memory category you selected."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "It sounded real."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Reconstructed memories may contain recorded material as reference."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Can I hear it again?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "The fragment is unavailable for repeated playback in this section."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Convenient."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Would you like to report a concern?"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "No. It probably doesn't mean anything."
+        },
+        {
+          "visual": "waveform_hide"
+        }
+      ],
+      "next": "q5"
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "act": "II",
+      "title": "Professional Judgment",
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "Your previous employment involved reviewing recorded experiences and determining whether they met the criteria for preservation. Which part of that work did you consider most important?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "Applying rules consistently, regardless of personal opinion."
+        },
+        {
+          "id": "B",
+          "text": "Considering the people whose experiences were being reviewed."
+        },
+        {
+          "id": "C",
+          "text": "Identifying errors and improving the accuracy of records."
+        },
+        {
+          "id": "D",
+          "text": "Understanding the consequences of a decision before making it."
+        }
+      ],
+      "post": [
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I was a memory auditor?",
+          "setFlag": "auditor_role_known"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "That is the title listed in your employment record."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I knew that. I just wanted to hear it said aloud."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Your evaluations were consistently satisfactory."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Was I good at the job?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Your performance met the required standards."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "That's a very official way of saying yes."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "It is an accurate way of describing your record."
+        },
+        {
+          "visual": "employment_summary_show",
+          "setFlag": "colleague_name_glimpsed"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Who's that?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "The name belongs to a former colleague."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I don't remember them."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "That is not unusual during memory assessment."
+        },
+        {
+          "visual": "employment_summary_hide"
+        }
+      ],
+      "next": "q6"
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "act": "II",
+      "title": "An Unfinished Promise",
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "Unfinished obligations can remain memorable long after the surrounding events have faded. Do you recall a promise you struggled to keep?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "I did what I could, even when it became difficult."
+        },
+        {
+          "id": "B",
+          "text": "I failed someone, and I still regret it."
+        },
+        {
+          "id": "C",
+          "text": "I found another way to fulfil the promise."
+        },
+        {
+          "id": "D",
+          "text": "I cannot confidently recall a specific example."
+        }
+      ],
+      "post": [
+        {
+          "visual": "waveform_play_faint"
+        },
+        {
+          "speaker": "VOICE",
+          "text": "You promised you wouldn't let them take it.",
+          "setFlag": "voice_promise_heard"
+        },
+        {
+          "visual": "waveform_hide"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "There it is again."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Could you repeat that?"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I heard the same voice."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Repeated experiences can occur during memory reconstruction."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Does that mean it's a real memory?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Not necessarily."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Then how do I know?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "That is one purpose of this assessment."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I think I let someone down."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Do you remember who?"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "No."
+        }
+      ],
+      "next": "q7"
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "act": "II",
+      "title": "The Empty Desk",
+      "pre": [
+        {
+          "visual": "office_show",
+          "setFlag": "empty_desk_seen"
+        }
+      ],
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "Imagine returning to work after an absence. A colleague's desk has been cleared. Your supervisor says the colleague resigned several weeks earlier. What would you be most likely to do?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "Accept the explanation unless something contradicts it."
+        },
+        {
+          "id": "B",
+          "text": "Ask colleagues whether they knew about the resignation."
+        },
+        {
+          "id": "C",
+          "text": "Try to remember the last time I spoke to the colleague."
+        },
+        {
+          "id": "D",
+          "text": "Look for a reason the departure might have been kept quiet."
+        }
+      ],
+      "post": [
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I know this place."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "The reconstruction is based on your former workplace."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I remember someone sitting there. They used to tap their fingers on the desk all the time."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Can you remember their name?"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "No. But I remember being annoyed by it."
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Emotional details can persist when other information becomes inaccessible."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "I wish I could remember their face."
+        },
+        {
+          "visual": "office_hide"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "Would you like a short pause?"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "No. Let's finish."
+        }
+      ],
+      "next": "q8"
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "act": "II",
+      "title": "Looking Back",
+      "question": {
+        "speaker": "ASSESSOR",
+        "text": "If you could revisit one period of your life with the knowledge you have now, what would you hope to change?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "I would have worked harder to achieve my goals."
+        },
+        {
+          "id": "B",
+          "text": "I would have spent more time with people who mattered to me."
+        },
+        {
+          "id": "C",
+          "text": "I would have questioned decisions I accepted too easily."
+        },
+        {
+          "id": "D",
+          "text": "I would have tried to understand events before they became irreversible."
+        }
+      ],
+      "post": [
+        {
+          "visual": "valuation_highlight"
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Does this affect my credits?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "It contributes to your behavioural profile but does not directly alter your current valuation."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Then what does affect it?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "The valuation reflects the eligible experiences in your archived profile."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "And if an experience isn't in the archive?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "It cannot contribute to the current valuation."
+        },
+        {
+          "speaker": "PROTAGONIST",
+          "text": "Even if it mattered?"
+        },
+        {
+          "speaker": "ASSESSOR",
+          "text": "The valuation is based on recorded information."
+        }
+      ],
+      "next": "q9"
     }
   ]
 }
