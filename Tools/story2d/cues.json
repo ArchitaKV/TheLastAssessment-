@@ -1,0 +1,676 @@
+{
+  "_about": "Visual/state cues for the 2D game, anchored to canonical Script text. 'at' matches the start of a stage direction, 'before:'/'after:' the start of a dialogue line or caption, 'start'/'end' the node boundaries. Cues never add story text. Cue vocabulary: see StoryDirector2D.RunCue.",
+  "prologue": [
+    {
+      "at": "start",
+      "cues": [
+        "view:0.1",
+        "await:Hotspot_Tablet"
+      ]
+    },
+    {
+      "at": "before:PRELIMINARY VALUATION: 143 CREDITS",
+      "cues": [
+        "view:0.2",
+        "flag:valuation_143_seen"
+      ]
+    }
+  ],
+  "q1": [
+    {
+      "at": "start",
+      "cues": [
+        "view:1.1",
+        "await:Hotspot_Tablet"
+      ]
+    }
+  ],
+  "q2": [
+    {
+      "at": "start",
+      "cues": [
+        "view:1.2"
+      ]
+    },
+    {
+      "at": "The image disappears.",
+      "cues": [
+        "hide:Question"
+      ]
+    }
+  ],
+  "q3": [
+    {
+      "at": "start",
+      "cues": [
+        "view:1.3"
+      ]
+    },
+    {
+      "at": "after:143 CREDITS",
+      "cues": [
+        "await:Hotspot_Value"
+      ]
+    },
+    {
+      "at": "The number shrinks into the corner.",
+      "cues": [
+        "shrink:Value",
+        "flag:valuation_in_corner",
+        "flicker:SecondFigure",
+        "flag:second_number_glimpsed"
+      ]
+    }
+  ],
+  "q4": [
+    {
+      "at": "start",
+      "cues": [
+        "view:1.4"
+      ]
+    },
+    {
+      "at": "A faint waveform appears.",
+      "cues": [
+        "show:Waveform"
+      ]
+    },
+    {
+      "at": "A faint sound plays.",
+      "cues": [
+        "wave:play"
+      ]
+    },
+    {
+      "at": "after:You promised—",
+      "cues": [
+        "flag:voice_fragment_heard"
+      ]
+    },
+    {
+      "at": "The recording cuts off.",
+      "cues": [
+        "wave:cut"
+      ]
+    },
+    {
+      "at": "The waveform disappears.",
+      "cues": [
+        "hide:Waveform"
+      ]
+    }
+  ],
+  "q5": [
+    {
+      "at": "start",
+      "cues": [
+        "view:2.1"
+      ]
+    },
+    {
+      "at": "after:I was a memory auditor?",
+      "cues": [
+        "flag:auditor_role_known"
+      ]
+    },
+    {
+      "at": "A short employment summary appears.",
+      "cues": [
+        "show:Summary",
+        "flag:colleague_name_glimpsed"
+      ]
+    },
+    {
+      "at": "The summary closes",
+      "cues": [
+        "hide:Summary"
+      ]
+    }
+  ],
+  "q6": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The voice from the earlier recording returns faintly.",
+      "cues": [
+        "view:1.4",
+        "show:Waveform",
+        "wave:faint"
+      ]
+    },
+    {
+      "at": "after:You promised you wouldn't let them take it.",
+      "cues": [
+        "flag:voice_promise_heard"
+      ]
+    },
+    {
+      "at": "before:There it is again.",
+      "cues": [
+        "wave:stop",
+        "hide:Waveform",
+        "view:room"
+      ]
+    }
+  ],
+  "q7": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "A reconstructed office appears.",
+      "cues": [
+        "view:2.3",
+        "flag:empty_desk_seen"
+      ]
+    },
+    {
+      "at": "The reconstruction fades away.",
+      "cues": [
+        "view:room"
+      ]
+    }
+  ],
+  "q8": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    }
+  ],
+  "q9": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "A reconstruction of the protagonist's former workplace appears.",
+      "cues": [
+        "view:3.1"
+      ]
+    },
+    {
+      "at": "after:I remember going through it.",
+      "cues": [
+        "flag:corridor_door_remembered"
+      ]
+    },
+    {
+      "at": "The reconstruction closes.",
+      "cues": [
+        "view:room"
+      ]
+    }
+  ],
+  "q10": [
+    {
+      "at": "start",
+      "cues": [
+        "view:3.2"
+      ]
+    },
+    {
+      "at": "before:ARCHIVE REFERENCE: PARTIAL.",
+      "cues": [
+        "flag:archive_partial_seen"
+      ]
+    },
+    {
+      "at": "The notice disappears.",
+      "cues": [
+        "notice:clear"
+      ]
+    }
+  ],
+  "q11": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The protagonist's employment history appears on screen.",
+      "cues": [
+        "view:3.3",
+        "show:Timeline",
+        "flag:timeline_gap_seen"
+      ]
+    }
+  ],
+  "q12": [
+    {
+      "at": "start",
+      "cues": [
+        "view:3.4"
+      ]
+    },
+    {
+      "at": "If the player chooses to listen",
+      "cues": [
+        "flag:residual_audio_heard",
+        "show:Playing"
+      ]
+    },
+    {
+      "at": "A metallic sound follows.",
+      "cues": [
+        "hide:Playing"
+      ]
+    },
+    {
+      "at": "The recording is added to the assessment's available evidence.",
+      "cues": [
+        "evidence:q12_recording"
+      ]
+    }
+  ],
+  "q13": [
+    {
+      "at": "start",
+      "cues": [
+        "view:4.1"
+      ]
+    },
+    {
+      "at": "The protagonist looks at the authorisation mark on the screen.",
+      "cues": [
+        "show:Mark",
+        "flag:authorisation_mark_seen"
+      ]
+    },
+    {
+      "at": "The question closes.",
+      "cues": [
+        "hide:Mark"
+      ]
+    }
+  ],
+  "q14": [
+    {
+      "at": "start",
+      "cues": [
+        "view:4.2"
+      ]
+    },
+    {
+      "at": "The protagonist looks back at the timeline.",
+      "cues": [
+        "view:3.3",
+        "show:Timeline"
+      ]
+    }
+  ],
+  "q15": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room",
+        "dim:0"
+      ]
+    },
+    {
+      "at": "The room's lighting dims.",
+      "cues": [
+        "dim:0.55"
+      ]
+    },
+    {
+      "at": "The protagonist closes their eyes.",
+      "cues": [
+        "fade:black:0.8"
+      ]
+    },
+    {
+      "at": "A corridor. Rain. A red light reflected in glass.",
+      "cues": [
+        "dim:0",
+        "view:4.3",
+        "fade:clear:0.8"
+      ]
+    },
+    {
+      "at": "A sharp sound follows.",
+      "cues": [
+        "cut:black"
+      ]
+    },
+    {
+      "at": "The memory ends.",
+      "cues": [
+        "dim:0.55",
+        "view:room",
+        "fade:clear:0.6"
+      ]
+    }
+  ],
+  "q16": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room",
+        "dim:0"
+      ]
+    },
+    {
+      "at": "before:The request has been denied.",
+      "cues": [
+        "show:Denial",
+        "flag:assessor_restrictions_known"
+      ]
+    },
+    {
+      "at": "The screen dims.",
+      "cues": [
+        "hide:Denial",
+        "dim:0.4"
+      ]
+    },
+    {
+      "at": "For several seconds, neither of them speaks.",
+      "cues": [
+        "wait:2"
+      ]
+    },
+    {
+      "at": "Then the next question appears.",
+      "cues": [
+        "dim:0"
+      ]
+    }
+  ],
+  "q17": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The corridor from Question 9 appears again.",
+      "cues": [
+        "view:3.1"
+      ]
+    },
+    {
+      "at": "For a fraction of a second, a door appears.",
+      "cues": [
+        "flash:Door:0.35",
+        "flag:door_glitch_seen"
+      ]
+    },
+    {
+      "at": "The image freezes.",
+      "cues": [
+        "glitch"
+      ]
+    },
+    {
+      "at": "The protagonist begins filling in the report.",
+      "cues": [
+        "show:Report"
+      ]
+    },
+    {
+      "at": "It disappears.",
+      "cues": [
+        "notice:clear"
+      ]
+    },
+    {
+      "at": "The question closes, but the protagonist no longer trusts the reconstruction.",
+      "cues": [
+        "hide:Report",
+        "view:room"
+      ]
+    }
+  ],
+  "q18": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "Two documents appear side by side.",
+      "cues": [
+        "view:5.2",
+        "show:Records"
+      ]
+    },
+    {
+      "at": "before:SUBJECT INSTANCE: ACTIVE.",
+      "cues": [
+        "flag:subject_instance_seen"
+      ]
+    },
+    {
+      "at": "The screen flickers. The documents disappear.",
+      "cues": [
+        "glitch",
+        "hide:Records"
+      ]
+    }
+  ],
+  "q19": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The assessment screen remains blank for several seconds.",
+      "cues": [
+        "wait:2"
+      ]
+    },
+    {
+      "at": "Then a window opens without being requested.",
+      "cues": [
+        "glitch",
+        "view:5.3",
+        "flag:continuity_grid_found"
+      ]
+    },
+    {
+      "at": "A diagram shows recorded experiences",
+      "cues": [
+        "show:Panel_Records"
+      ]
+    },
+    {
+      "at": "The final question appears.",
+      "cues": [
+        "notice:clear"
+      ]
+    }
+  ],
+  "q20": [
+    {
+      "at": "start",
+      "cues": [
+        "view:5.4"
+      ]
+    },
+    {
+      "at": "The screen goes dark.",
+      "cues": [
+        "view:black"
+      ]
+    },
+    {
+      "at": "A pause.",
+      "cues": [
+        "wait:1.5"
+      ]
+    },
+    {
+      "at": "end",
+      "cues": [
+        "wait:2.5"
+      ]
+    }
+  ],
+  "ending1": [
+    {
+      "at": "start",
+      "cues": [
+        "view:5.4"
+      ]
+    },
+    {
+      "at": "The assessment window closes.",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The protagonist looks at the valuation: 143 credits.",
+      "cues": [
+        "view:0.2",
+        "wait:2.5"
+      ]
+    },
+    {
+      "at": "The screen fades to white.",
+      "cues": [
+        "fade:white:2.5"
+      ]
+    }
+  ],
+  "ending2": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The protagonist looks at the empty desk in the reconstructed office one last time.",
+      "cues": [
+        "view:2.3"
+      ]
+    },
+    {
+      "at": "end",
+      "cues": [
+        "fade:black:2"
+      ]
+    }
+  ],
+  "ending3": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "A warning appears as the system attempts to close the session.",
+      "cues": [
+        "glitch"
+      ]
+    },
+    {
+      "at": "The protagonist follows the access route they remembered from the corridor.",
+      "cues": [
+        "view:3.1",
+        "show:Door"
+      ]
+    },
+    {
+      "at": "They step through it.",
+      "cues": [
+        "wait:2"
+      ]
+    },
+    {
+      "at": "The display goes dark.",
+      "cues": [
+        "fade:black:1.5"
+      ]
+    }
+  ],
+  "ending4": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The screen changes to a new case file.",
+      "cues": [
+        "view:black"
+      ]
+    },
+    {
+      "at": "The protagonist opens it.",
+      "cues": [
+        "wait:2.5",
+        "fade:black:1.5"
+      ]
+    }
+  ],
+  "ending5": [
+    {
+      "at": "start",
+      "cues": [
+        "view:room"
+      ]
+    },
+    {
+      "at": "The assessment window fills with conflicting records.",
+      "cues": [
+        "view:5.2",
+        "show:Records"
+      ]
+    },
+    {
+      "at": "end",
+      "cues": [
+        "fade:black:2"
+      ]
+    }
+  ],
+  "ending6": [
+    {
+      "at": "start",
+      "cues": [
+        "view:5.3",
+        "show:Panel_Subject",
+        "show:Panel_Records"
+      ]
+    },
+    {
+      "at": "The protagonist removes the valuation from the final report.",
+      "cues": [
+        "hide:Value143"
+      ]
+    },
+    {
+      "at": "The screen goes dark.",
+      "cues": [
+        "view:black"
+      ]
+    },
+    {
+      "at": "end",
+      "cues": [
+        "wait:2"
+      ]
+    }
+  ]
+}

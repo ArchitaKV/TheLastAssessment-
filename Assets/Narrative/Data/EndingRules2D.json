@@ -1,0 +1,49 @@
+{
+  "approved": true,
+  "note": "Approved ending rules (EndingDesignProposal.md / EndingRules_FinalReview.md). First matching rule wins; fallback when none match. Ending names are never shown to the player.",
+  "rules": [
+    {
+      "ending": "ending6",
+      "all": [
+        {"answer": "q20", "values": ["C", "D"]},
+        {"answer": "q18", "values": ["B"]},
+        {"evidence": "q12_recording"}
+      ],
+      "any": []
+    },
+    {
+      "ending": "ending5",
+      "all": [
+        {"answer": "q20", "values": ["B"]},
+        {"evidence": "q12_recording"}
+      ],
+      "any": []
+    },
+    {
+      "ending": "ending4",
+      "all": [
+        {"answer": "q20", "values": ["C"]},
+        {"answer": "q16", "values": ["C"]}
+      ],
+      "any": []
+    },
+    {
+      "ending": "ending3",
+      "all": [
+        {"answer": "q20", "values": ["D"]}
+      ],
+      "any": [
+        {"answer": "q9", "values": ["B", "C"]},
+        {"answer": "q17", "values": ["B"]}
+      ]
+    },
+    {
+      "ending": "ending1",
+      "all": [
+        {"answer": "q20", "values": ["A"]}
+      ],
+      "any": []
+    }
+  ],
+  "fallback": "ending2"
+}

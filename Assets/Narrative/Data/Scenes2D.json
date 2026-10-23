@@ -1,0 +1,1632 @@
+{
+  "_about": "2D view layouts, one per designed scene. Coordinates are Figma pixels on the 1920x1080 stage (x, y = top-left; text uses its baseline). Text here is Figma UI text only; story text comes from AssessmentScript2D.json. Built by Assessment2DBuilder.",
+  "views": [
+    {
+      "id": "0.1",
+      "bg": "Backgrounds/BG_0-1_AssessmentRoom",
+      "dialogue": "room",
+      "hud": "pending",
+      "hotspots": [
+        {
+          "name": "Hotspot_ObservationWindow",
+          "rect": [
+            365,
+            265,
+            1182,
+            330
+          ],
+          "action": "disabled"
+        },
+        {
+          "name": "Hotspot_Desk",
+          "rect": [
+            440,
+            672,
+            1045,
+            63
+          ],
+          "action": "disabled"
+        },
+        {
+          "name": "Hotspot_Tablet",
+          "rect": [
+            905,
+            640,
+            112,
+            75
+          ],
+          "action": "advance"
+        }
+      ]
+    },
+    {
+      "id": "0.2",
+      "bg": "Backgrounds/BG_0-2_PreliminaryValuation",
+      "dialogue": "room",
+      "hotspots": [
+        {
+          "name": "Hotspot_Value",
+          "rect": [
+            660,
+            490,
+            600,
+            115
+          ],
+          "action": "disabled"
+        }
+      ],
+      "captionLabel": "Caption_Label",
+      "captionValue": "Caption_Value",
+      "elements": [
+        {
+          "type": "text",
+          "name": "Caption_Label",
+          "text": "PRELIMINARY VALUATION",
+          "x": 660,
+          "baseline": 421,
+          "w": 600,
+          "size": 16,
+          "color": "cyan",
+          "align": "center",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "name": "Caption_Value",
+          "text": "143 CREDITS",
+          "x": 360,
+          "baseline": 581,
+          "w": 1200,
+          "size": 94,
+          "color": "white",
+          "align": "center"
+        }
+      ]
+    },
+    {
+      "id": "1.1",
+      "bg": "Backgrounds/BG_1-1_Familiarity",
+      "dialogue": "tablet",
+      "hud": "progress",
+      "question": {
+        "style": "tablet",
+        "label": "{ACT} / QUESTION {nn}"
+      },
+      "hotspots": [
+        {
+          "name": "Hotspot_Tablet",
+          "rect": [
+            795,
+            617,
+            332,
+            215
+          ],
+          "action": "advance"
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "bg": "Backgrounds/BG_1-2_RoomWide",
+      "dialogue": "card",
+      "question": {
+        "style": "images",
+        "label": "{ACT} / QUESTION {nn}",
+        "hideOnAnswer": false,
+        "tiles": [
+          {
+            "rect": [
+              294,
+              240,
+              652,
+              290
+            ],
+            "sprite": "Clues/Q2_ClockRepair"
+          },
+          {
+            "rect": [
+              975,
+              240,
+              652,
+              290
+            ],
+            "sprite": "Clues/Q2_Embrace"
+          },
+          {
+            "rect": [
+              294,
+              552,
+              652,
+              290
+            ],
+            "sprite": "Clues/Q2_Diagram"
+          },
+          {
+            "rect": [
+              975,
+              552,
+              652,
+              290
+            ],
+            "sprite": "Clues/Q2_Badge"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.3",
+      "bg": "Backgrounds/BG_1-3_TabletMacro",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "hotspots": [
+        {
+          "name": "Hotspot_Value",
+          "rect": [
+            600,
+            380,
+            720,
+            260
+          ],
+          "action": "advance"
+        }
+      ],
+      "elements": [
+        {
+          "type": "group",
+          "name": "Value",
+          "rect": [
+            360,
+            400,
+            1200,
+            300
+          ],
+          "hidden": true,
+          "caption": "143 CREDITS"
+        },
+        {
+          "type": "text",
+          "name": "Value_Label",
+          "parent": "Value",
+          "text": "PRELIMINARY VALUATION",
+          "x": 660,
+          "baseline": 440,
+          "w": 600,
+          "size": 16,
+          "color": "cyan",
+          "align": "center",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "name": "Value_Number",
+          "parent": "Value",
+          "text": "143 CREDITS",
+          "x": 360,
+          "baseline": 600,
+          "w": 1200,
+          "size": 94,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "name": "SecondFigure",
+          "parent": "Value",
+          "text": "--- CREDITS",
+          "x": 360,
+          "baseline": 680,
+          "w": 1200,
+          "size": 40,
+          "color": "grey",
+          "align": "center",
+          "hidden": true
+        }
+      ]
+    },
+    {
+      "id": "1.4",
+      "bg": "Backgrounds/BG_1-4_TabletWaveform",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "panel",
+          "name": "Waveform",
+          "rect": [
+            350,
+            336,
+            1220,
+            270
+          ],
+          "hidden": true
+        },
+        {
+          "type": "text",
+          "name": "Waveform_Label",
+          "parent": "Waveform",
+          "text": "AUDIO / SIGNAL HELD",
+          "x": 374,
+          "baseline": 371,
+          "w": 600,
+          "size": 16,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "waveform",
+          "name": "Waveform_Bars",
+          "parent": "Waveform",
+          "rect": [
+            374,
+            395,
+            1172,
+            100
+          ]
+        },
+        {
+          "type": "text",
+          "name": "Waveform_Time",
+          "parent": "Waveform",
+          "text": "00:-- / --:--",
+          "x": 374,
+          "baseline": 560,
+          "w": 600,
+          "size": 22,
+          "color": "grey",
+          "spacing": 2
+        }
+      ]
+    },
+    {
+      "id": "2.1",
+      "bg": "Backgrounds/BG_2-1_Workplace",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "panel",
+          "name": "Summary",
+          "rect": [
+            64,
+            560,
+            800,
+            262
+          ],
+          "hidden": true
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "WORK SUMMARY / Q05",
+          "x": 86,
+          "baseline": 602,
+          "w": 400,
+          "size": 13,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "REF: EMP-RECORD",
+          "x": 640,
+          "baseline": 602,
+          "w": 200,
+          "size": 11,
+          "color": "grey",
+          "align": "right",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "Former workplace",
+          "x": 86,
+          "baseline": 678,
+          "w": 700,
+          "size": 36,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "RECORD TYPE",
+          "x": 86,
+          "baseline": 715,
+          "w": 180,
+          "size": 11,
+          "color": "grey",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "RECORD STATE",
+          "x": 271,
+          "baseline": 715,
+          "w": 300,
+          "size": 11,
+          "color": "grey",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "Employment",
+          "x": 86,
+          "baseline": 748,
+          "w": 180,
+          "size": 22,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "[NOT PROVIDED]",
+          "x": 271,
+          "baseline": 748,
+          "w": 400,
+          "size": 22,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "ASSESSMENT PENDING — AWAITING SUBJECT INPUT",
+          "x": 86,
+          "baseline": 801,
+          "w": 600,
+          "size": 11,
+          "color": "grey",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Summary",
+          "text": "LIVE",
+          "x": 760,
+          "baseline": 801,
+          "w": 80,
+          "size": 11,
+          "color": "cyan",
+          "align": "right",
+          "spacing": 2
+        }
+      ]
+    },
+    {
+      "id": "room",
+      "bg": "Backgrounds/BG_0-1_AssessmentRoom",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "panel",
+          "name": "Denial",
+          "rect": [
+            656,
+            596,
+            440,
+            140
+          ],
+          "hidden": true
+        },
+        {
+          "type": "text",
+          "parent": "Denial",
+          "text": "RESTRICTED DOCUMENT REQUEST / Q16",
+          "x": 679,
+          "baseline": 628,
+          "w": 400,
+          "size": 9,
+          "color": "cyan",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Denial",
+          "text": "PERMISSION DENIED",
+          "x": 679,
+          "baseline": 687,
+          "w": 400,
+          "size": 33,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Denial",
+          "text": "SOURCE: ETERNA ACCESS-CONTROL SYSTEM",
+          "x": 679,
+          "baseline": 720,
+          "w": 400,
+          "size": 10.5,
+          "color": "grey",
+          "spacing": 2
+        }
+      ]
+    },
+    {
+      "id": "2.3",
+      "bg": "Backgrounds/BG_2-3_EmptyDesk",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      }
+    },
+    {
+      "id": "3.1",
+      "bg": "Backgrounds/BG_3-1_Corridor",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "image",
+          "name": "Door",
+          "sprite": "Backgrounds/FX_5-1_DoorLayer",
+          "rect": [
+            883,
+            423,
+            154,
+            276
+          ],
+          "hidden": true
+        },
+        {
+          "type": "panel",
+          "name": "Report",
+          "rect": [
+            1260,
+            260,
+            560,
+            300
+          ],
+          "hidden": true
+        },
+        {
+          "type": "bar",
+          "parent": "Report",
+          "rect": [
+            1290,
+            320,
+            500,
+            1
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "Report",
+          "rect": [
+            1290,
+            390,
+            500,
+            1
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "Report",
+          "rect": [
+            1290,
+            460,
+            500,
+            1
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "Report",
+          "rect": [
+            1290,
+            530,
+            220,
+            1
+          ],
+          "color": "cyan"
+        }
+      ]
+    },
+    {
+      "id": "3.2",
+      "bg": "Backgrounds/BG_3-2_RestrictedArchive",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      }
+    },
+    {
+      "id": "3.3",
+      "bg": "Backgrounds/BG_3-3_MonitorTimeline",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "panel",
+          "name": "Timeline",
+          "rect": [
+            140,
+            150,
+            1640,
+            680
+          ],
+          "hidden": true
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "EMPLOYMENT RECORD / INTERVAL INSPECTION",
+          "x": 168,
+          "baseline": 201,
+          "w": 700,
+          "size": 13,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "Record continuity",
+          "x": 168,
+          "baseline": 244,
+          "w": 700,
+          "size": 28,
+          "color": "white"
+        },
+        {
+          "type": "bar",
+          "parent": "Timeline",
+          "rect": [
+            168,
+            372,
+            560,
+            2
+          ],
+          "color": "cyan"
+        },
+        {
+          "type": "bar",
+          "parent": "Timeline",
+          "rect": [
+            728,
+            372,
+            600,
+            2
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "Timeline",
+          "rect": [
+            1328,
+            372,
+            424,
+            2
+          ],
+          "color": "cyan"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "[DATE]",
+          "x": 168,
+          "baseline": 337,
+          "w": 120,
+          "size": 17,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD / [ID]",
+          "x": 168,
+          "baseline": 353,
+          "w": 120,
+          "size": 9,
+          "color": "grey",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD AVAILABLE",
+          "x": 168,
+          "baseline": 403,
+          "w": 130,
+          "size": 12,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "[DATE]",
+          "x": 308,
+          "baseline": 337,
+          "w": 120,
+          "size": 17,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD / [ID]",
+          "x": 308,
+          "baseline": 353,
+          "w": 120,
+          "size": 9,
+          "color": "grey",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD AVAILABLE",
+          "x": 312,
+          "baseline": 403,
+          "w": 130,
+          "size": 12,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "[DATE]",
+          "x": 448,
+          "baseline": 337,
+          "w": 120,
+          "size": 17,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD / [ID]",
+          "x": 448,
+          "baseline": 353,
+          "w": 120,
+          "size": 9,
+          "color": "grey",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD AVAILABLE",
+          "x": 456,
+          "baseline": 403,
+          "w": 130,
+          "size": 12,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "INTERVAL START",
+          "x": 880,
+          "baseline": 353,
+          "w": 180,
+          "size": 10,
+          "color": "grey",
+          "align": "center",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "NO RECORDS AVAILABLE",
+          "x": 860,
+          "baseline": 431,
+          "w": 220,
+          "size": 12,
+          "color": "grey",
+          "align": "center",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "3 YEARS, 4 MONTHS",
+          "x": 560,
+          "baseline": 500,
+          "w": 820,
+          "size": 48,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "INTERVAL UNACCOUNTED",
+          "x": 760,
+          "baseline": 545,
+          "w": 420,
+          "size": 10,
+          "color": "cyan",
+          "align": "center",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "[DATE]",
+          "x": 1342,
+          "baseline": 337,
+          "w": 120,
+          "size": 17,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD / [ID]",
+          "x": 1342,
+          "baseline": 353,
+          "w": 120,
+          "size": 9,
+          "color": "grey",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD AVAILABLE",
+          "x": 1344,
+          "baseline": 403,
+          "w": 130,
+          "size": 12,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "[DATE]",
+          "x": 1478,
+          "baseline": 337,
+          "w": 120,
+          "size": 17,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD / [ID]",
+          "x": 1478,
+          "baseline": 353,
+          "w": 120,
+          "size": 9,
+          "color": "grey",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD AVAILABLE",
+          "x": 1484,
+          "baseline": 403,
+          "w": 130,
+          "size": 12,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "[DATE]",
+          "x": 1614,
+          "baseline": 337,
+          "w": 120,
+          "size": 17,
+          "color": "white",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD / [ID]",
+          "x": 1614,
+          "baseline": 353,
+          "w": 120,
+          "size": 9,
+          "color": "grey",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "RECORD AVAILABLE",
+          "x": 1624,
+          "baseline": 403,
+          "w": 130,
+          "size": 12,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "EMPLOYMENT STATUS: CONTINUOUS",
+          "x": 168,
+          "baseline": 800,
+          "w": 600,
+          "size": 13,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "Timeline",
+          "text": "NO INTERRUPTION RECORDED",
+          "x": 1352,
+          "baseline": 800,
+          "w": 400,
+          "size": 13,
+          "color": "grey",
+          "align": "right",
+          "spacing": 3
+        }
+      ]
+    },
+    {
+      "id": "3.4",
+      "bg": "Backgrounds/BG_3-4_Recorder",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "name": "Recorder_Time",
+          "text": "--:4-:-- / --.--.----",
+          "x": 830,
+          "baseline": 510,
+          "w": 260,
+          "size": 14,
+          "color": "dark"
+        },
+        {
+          "type": "bar",
+          "name": "Playing",
+          "rect": [
+            1092,
+            498,
+            10,
+            10
+          ],
+          "color": "cyan",
+          "hidden": true
+        },
+        {
+          "type": "outline",
+          "name": "Metadata_Highlight",
+          "rect": [
+            818,
+            488,
+            272,
+            32
+          ],
+          "color": "cyan",
+          "hidden": true
+        }
+      ],
+      "hotspots": [
+        {
+          "name": "Hotspot_Recorder",
+          "rect": [
+            770,
+            290,
+            380,
+            390
+          ],
+          "action": "advance"
+        }
+      ]
+    },
+    {
+      "id": "4.1",
+      "bg": "Backgrounds/BG_4-1_DeskPapers",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "group",
+          "name": "Mark",
+          "rect": [
+            1240,
+            670,
+            260,
+            70
+          ],
+          "hidden": true
+        },
+        {
+          "type": "text",
+          "parent": "Mark",
+          "text": "AUTHORIZATION",
+          "x": 1263,
+          "baseline": 695,
+          "w": 220,
+          "size": 12.6,
+          "color": "dark",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "Mark",
+          "text": "RESTRICTED RECORD",
+          "x": 1277,
+          "baseline": 719,
+          "w": 220,
+          "size": 10.8,
+          "color": "dark",
+          "spacing": 2
+        }
+      ]
+    },
+    {
+      "id": "4.2",
+      "bg": "Backgrounds/BG_4-2_OfficeCity",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "panel",
+          "name": "History",
+          "rect": [
+            880,
+            380,
+            1000,
+            420
+          ]
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "CONTINUITY / PREVIOUS EVALUATIONS",
+          "x": 908,
+          "baseline": 425,
+          "w": 700,
+          "size": 16,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "Performance history",
+          "x": 908,
+          "baseline": 484,
+          "w": 700,
+          "size": 32,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "RECORD TIMESTAMP",
+          "x": 908,
+          "baseline": 553,
+          "w": 400,
+          "size": 16,
+          "color": "grey",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "STATUS",
+          "x": 1650,
+          "baseline": 553,
+          "w": 200,
+          "size": 16,
+          "color": "grey",
+          "align": "right",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "[TIMESTAMP 01]",
+          "x": 908,
+          "baseline": 618,
+          "w": 400,
+          "size": 22,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "REVIEWED",
+          "x": 1650,
+          "baseline": 613,
+          "w": 200,
+          "size": 18,
+          "color": "grey",
+          "align": "right"
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "[TIMESTAMP 02]",
+          "x": 908,
+          "baseline": 683,
+          "w": 400,
+          "size": 22,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "COMPLETE",
+          "x": 1650,
+          "baseline": 678,
+          "w": 200,
+          "size": 18,
+          "color": "grey",
+          "align": "right"
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "[TIMESTAMP 03]",
+          "x": 908,
+          "baseline": 748,
+          "w": 400,
+          "size": 22,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "History",
+          "text": "REVIEWED",
+          "x": 1650,
+          "baseline": 743,
+          "w": 200,
+          "size": 18,
+          "color": "grey",
+          "align": "right"
+        }
+      ]
+    },
+    {
+      "id": "4.3",
+      "bg": "Backgrounds/BG_4-3_CorridorRedLight",
+      "dialogue": "card",
+      "elements": [
+        {
+          "type": "panel",
+          "name": "MemoryTag",
+          "rect": [
+            64,
+            70,
+            420,
+            48
+          ]
+        },
+        {
+          "type": "text",
+          "parent": "MemoryTag",
+          "text": "Q15 / MEMORY RECONSTRUCTION",
+          "x": 84,
+          "baseline": 101,
+          "w": 380,
+          "size": 16,
+          "color": "cyan",
+          "spacing": 3
+        }
+      ]
+    },
+    {
+      "id": "5.2",
+      "bg": "Backgrounds/BG_5-2_RoomBright",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "Q{nn} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "group",
+          "name": "Records",
+          "rect": [
+            240,
+            300,
+            1440,
+            520
+          ],
+          "hidden": true
+        },
+        {
+          "type": "text",
+          "parent": "Records",
+          "text": "RECORD COMPARISON / Q18",
+          "x": 266,
+          "baseline": 333,
+          "w": 600,
+          "size": 16,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "panel",
+          "name": "Record_Official",
+          "parent": "Records",
+          "rect": [
+            266,
+            366,
+            660,
+            380
+          ]
+        },
+        {
+          "type": "text",
+          "parent": "Record_Official",
+          "text": "VERIFIED",
+          "x": 294,
+          "baseline": 406,
+          "w": 600,
+          "size": 16,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "Record_Official",
+          "text": "Final night / sequence",
+          "x": 294,
+          "baseline": 463,
+          "w": 600,
+          "size": 30,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Record_Official",
+          "text": "CONFIDENCE / HIGH",
+          "x": 294,
+          "baseline": 715,
+          "w": 600,
+          "size": 15,
+          "color": "grey",
+          "spacing": 2
+        },
+        {
+          "type": "panel",
+          "name": "Record_Fragment",
+          "parent": "Records",
+          "rect": [
+            972,
+            366,
+            660,
+            440
+          ]
+        },
+        {
+          "type": "text",
+          "parent": "Record_Fragment",
+          "text": "PARTIAL / LOWER CONFIDENCE",
+          "x": 1000,
+          "baseline": 406,
+          "w": 600,
+          "size": 16,
+          "color": "grey",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "Record_Fragment",
+          "text": "Final night / sequence",
+          "x": 1000,
+          "baseline": 463,
+          "w": 600,
+          "size": 30,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Record_Fragment",
+          "text": "CONFIDENCE / LOW",
+          "x": 1000,
+          "baseline": 715,
+          "w": 600,
+          "size": 15,
+          "color": "grey",
+          "spacing": 2
+        },
+        {
+          "type": "text",
+          "name": "Field_Status",
+          "parent": "Record_Fragment",
+          "text": "",
+          "x": 1000,
+          "baseline": 752,
+          "w": 600,
+          "size": 18,
+          "color": "cyan",
+          "spacing": 2,
+          "hidden": true,
+          "caption": "CONTINUITY STATUS: UNAUTHORISED.",
+          "applyCaption": true
+        },
+        {
+          "type": "text",
+          "name": "Field_Instance",
+          "parent": "Record_Fragment",
+          "text": "",
+          "x": 1000,
+          "baseline": 786,
+          "w": 600,
+          "size": 21,
+          "color": "white",
+          "spacing": 2,
+          "hidden": true,
+          "caption": "SUBJECT INSTANCE: ACTIVE.",
+          "applyCaption": true
+        }
+      ]
+    },
+    {
+      "id": "5.3",
+      "bg": "Backgrounds/BG_5-3_ArchiveGrid",
+      "dialogue": "card",
+      "elements": [
+        {
+          "type": "panel",
+          "name": "Panel_Subject",
+          "rect": [
+            236,
+            488,
+            548,
+            172
+          ],
+          "hidden": true,
+          "caption": "143 CREDITS."
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Subject",
+          "text": "SUBJECT A-4172 / CONTINUITY",
+          "x": 260,
+          "baseline": 522,
+          "w": 500,
+          "size": 14,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "name": "Value143",
+          "parent": "Panel_Subject",
+          "text": "143 CREDITS",
+          "x": 260,
+          "baseline": 566,
+          "w": 500,
+          "size": 30,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Subject",
+          "text": "3 YEARS, 4 MONTHS",
+          "x": 260,
+          "baseline": 604,
+          "w": 500,
+          "size": 20,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "name": "Classification",
+          "parent": "Panel_Subject",
+          "text": "CLASSIFICATION: ASSESSMENT CYCLES",
+          "x": 260,
+          "baseline": 635,
+          "w": 500,
+          "size": 14,
+          "color": "cyan",
+          "spacing": 3,
+          "hidden": true,
+          "caption": "ASSESSMENT CYCLE: ACTIVE."
+        },
+        {
+          "type": "panel",
+          "name": "Panel_Records",
+          "rect": [
+            1226,
+            400,
+            548,
+            232
+          ],
+          "hidden": true
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Records",
+          "text": "CONTINUITY GRID / SUBJECT RECORDS",
+          "x": 1250,
+          "baseline": 430,
+          "w": 500,
+          "size": 15,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Records",
+          "text": "A-4172   /   PROFILE REPEATED",
+          "x": 1250,
+          "baseline": 466,
+          "w": 500,
+          "size": 18,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Records",
+          "text": "TIMELINE: INCOMPLETE",
+          "x": 1250,
+          "baseline": 488,
+          "w": 500,
+          "size": 18,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Records",
+          "text": "A-4173   /   PROFILE REPEATED",
+          "x": 1250,
+          "baseline": 524,
+          "w": 500,
+          "size": 18,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Records",
+          "text": "TIMELINE: INCOMPLETE",
+          "x": 1250,
+          "baseline": 546,
+          "w": 500,
+          "size": 18,
+          "color": "grey"
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Records",
+          "text": "A-4174   /   PROFILE REPEATED",
+          "x": 1250,
+          "baseline": 582,
+          "w": 500,
+          "size": 18,
+          "color": "white"
+        },
+        {
+          "type": "text",
+          "parent": "Panel_Records",
+          "text": "TIMELINE: INCOMPLETE",
+          "x": 1250,
+          "baseline": 604,
+          "w": 500,
+          "size": 18,
+          "color": "grey"
+        }
+      ]
+    },
+    {
+      "id": "5.4",
+      "bg": "Backgrounds/BG_0-1_AssessmentRoom",
+      "dialogue": "card",
+      "question": {
+        "style": "card",
+        "label": "{SPEAKER} / {TITLE}"
+      },
+      "elements": [
+        {
+          "type": "panel",
+          "name": "GridScreen",
+          "rect": [
+            700,
+            540,
+            330,
+            104
+          ]
+        },
+        {
+          "type": "text",
+          "parent": "GridScreen",
+          "text": "CONTINUITY GRID",
+          "x": 716,
+          "baseline": 567,
+          "w": 300,
+          "size": 13,
+          "color": "cyan",
+          "spacing": 3
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            716,
+            582,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            768,
+            582,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            820,
+            582,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            872,
+            582,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            924,
+            582,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            976,
+            582,
+            40,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            716,
+            608,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            768,
+            608,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            820,
+            608,
+            46,
+            18
+          ],
+          "color": "cyan"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            872,
+            608,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            924,
+            608,
+            46,
+            18
+          ],
+          "color": "border"
+        },
+        {
+          "type": "bar",
+          "parent": "GridScreen",
+          "rect": [
+            976,
+            608,
+            40,
+            18
+          ],
+          "color": "border"
+        }
+      ]
+    },
+    {
+      "id": "black",
+      "bg": "",
+      "dialogue": "card",
+      "captionValue": "Center",
+      "elements": [
+        {
+          "type": "text",
+          "name": "Center",
+          "text": "",
+          "x": 160,
+          "baseline": 560,
+          "w": 1600,
+          "size": 40,
+          "color": "white",
+          "align": "center",
+          "spacing": 6
+        }
+      ]
+    }
+  ]
+}

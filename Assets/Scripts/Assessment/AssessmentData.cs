@@ -26,17 +26,38 @@ public class ScriptChoice
     public string[] setFlags; // optional flags recorded when this choice is picked (e.g. Q12 heard / retained)
 }
 
+// Lines played only after one of the listed answers (2D data, Q12). Which answers apply is data.
+[Serializable]
+public class ScriptBranch
+{
+    public string[] choices;
+    public ScriptLine[] lines;
+}
+
+[Serializable]
+public class EvidenceDef
+{
+    public string id;
+    public string title;  // the source question's title
+    public string source; // e.g. "Q12"
+    public string text;   // copied from the Script
+    public string heardFlag; // text is shown only once this flag is set (kept-but-unheard evidence shows its title only)
+}
+
 [Serializable]
 public class ScriptNode
 {
     public string id;
     public int number;
     public string act;
+    public string actTitle; // "ACT I — INTAKE" (2D data)
+    public string summary;  // endings: the Script's one-sentence description (2D data)
     public string title;
     public ScriptLine[] pre;
     public ScriptLine question;
     public ScriptChoice[] choices;
     public ScriptLine[] post;
+    public ScriptBranch[] branches;
     public string next;
 
     public bool HasQuestion => question != null && !string.IsNullOrEmpty(question.text) && choices != null && choices.Length > 0;
@@ -47,6 +68,8 @@ public class AssessmentData
 {
     public string source;
     public string startNode;
+    public string[] endings;      // 2D data: ending node ids
+    public EvidenceDef[] evidence; // 2D data: evidence the Script names
     public ScriptNode[] nodes;
 
     Dictionary<string, ScriptNode> byId;
@@ -94,5 +117,6 @@ public class AssessmentData
         if (node.pre != null) foreach (var l in node.pre) yield return l;
         if (node.question != null && !string.IsNullOrEmpty(node.question.text)) yield return node.question;
         if (node.post != null) foreach (var l in node.post) yield return l;
+        if (node.branches != null) foreach (var b in node.branches) foreach (var l in b.lines) yield return l;
     }
 }

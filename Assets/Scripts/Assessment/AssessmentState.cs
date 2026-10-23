@@ -34,9 +34,19 @@ public class AssessmentState
 
     public bool HasFlag(string flag) => flags.Contains(flag);
 
+    public List<string> evidence = new(); // 2D: evidence ids, each recorded once
+
+    public void AddEvidence(string id)
+    {
+        if (!evidence.Contains(id)) evidence.Add(id);
+    }
+
     // ---------- Single-slot save ----------
 
-    public static string SavePath => Path.Combine(Application.persistentDataPath, "assessment_save.json");
+    // The 2D slice sets its own file so it can never overwrite the 3D chamber's save.
+    public static string SaveFileName = "assessment_save.json";
+
+    public static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
 
     public static bool SaveExists => File.Exists(SavePath);
 
