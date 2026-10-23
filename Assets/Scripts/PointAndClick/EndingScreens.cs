@@ -107,7 +107,8 @@ public class EndingScreens : MonoBehaviour
                 Trace(d, index);
                 if (ShotHook != null) yield return ShotHook($"end_{d.id}_{index + 1}");
             }
-            if (Time.timeScale == 0f) { step = 0; yield return null; continue; } // pause/evidence menu open: it owns input
+            // Pause/evidence menu open, or closed this frame by the key that chose Resume: it owns input.
+            if (Time.timeScale == 0f || Time.frameCount == GameMenus.ClosedFrame) { step = 0; yield return null; continue; }
             // Keys are read here, not via UI Submit: a mouse click on empty space clears the selection and would kill Enter.
             if (EventSystem.current.currentSelectedGameObject != null) EventSystem.current.SetSelectedGameObject(null);
             if (autoplay) { step = 1; yield return new WaitForSecondsRealtime(0.3f); }

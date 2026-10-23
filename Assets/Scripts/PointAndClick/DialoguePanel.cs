@@ -13,18 +13,31 @@ public class DialoguePanel : MonoBehaviour
 
     public bool Waiting { get; set; }
 
-    void Awake() => Hide();
+    Vector2 home;
+
+    void Awake()
+    {
+        home = ((RectTransform)transform).anchoredPosition;
+        Hide();
+    }
 
     public void Show(ScriptLine line)
     {
         speaker.text = string.IsNullOrEmpty(speakerSuffix) ? line.speaker : $"{line.speaker} / {speakerSuffix}";
         body.text = line.text;
-        group.alpha = 1f;
+        // Slides in when it appears; later lines replace the text in place.
+        if (group.alpha < 0.01f) StartCoroutine(Motion2D.Appear(group, (RectTransform)transform, home, 0.22f));
+        if (!shown) { shown = true; Ambience.TextShown(true); }
     }
+
+    bool shown;
 
     public void Hide()
     {
+        if (shown) { shown = false; Ambience.TextShown(false); }
+        StopAllCoroutines();
         group.alpha = 0f;
+        ((RectTransform)transform).anchoredPosition = home;
         Waiting = false;
     }
 

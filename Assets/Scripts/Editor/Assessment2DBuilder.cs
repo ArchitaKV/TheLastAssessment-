@@ -73,6 +73,7 @@ public static class Assessment2DBuilder
         scaler.matchWidthOrHeight = 0.5f;
         var stage = ChamberBuilder.Rect("Stage_1920x1080", canvasGo.transform, new(0.5f, 0.5f), new(0.5f, 0.5f), Vector2.zero, StageFit.Size);
         stage.gameObject.AddComponent<StageFit>();
+        stage.gameObject.AddComponent<RectMask2D>(); // camera push / drift stay inside the frame on letterboxed screens
 
         var views = layout.views.Select(v => BuildView(v, stage)).ToArray();
         var endingScreens = BuildEndingScreens(stage);
@@ -113,6 +114,7 @@ public static class Assessment2DBuilder
         so.FindProperty("actCardText").objectReferenceValue = actText;
         so.FindProperty("endingScreens").objectReferenceValue = endingScreens;
         so.FindProperty("endingScreensAsset").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TextAsset>(EndingScreensPath);
+        so.FindProperty("ambience").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(AmbiencePath);
         var endingSprites = Directory.GetFiles(ArtRoot + "Endings", "*.png").Select(p => AssetDatabase.LoadAssetAtPath<Sprite>(p.Replace('\\', '/'))).ToArray();
         var spritesProp = so.FindProperty("endingBackgrounds");
         spritesProp.arraySize = endingSprites.Length;
@@ -127,10 +129,15 @@ public static class Assessment2DBuilder
     }
 
     // Batch entry point: a Windows player containing only the 2D scene (Build Settings untouched).
-    public static void BuildPlayer()
+    public static void BuildPlayer() => BuildPlayer(BuildOptions.None);
+
+    // Same player, rebuilt without the incremental build cache (release / validation builds).
+    public static void CleanBuildPlayer() => BuildPlayer(BuildOptions.CleanBuildCache);
+
+    static void BuildPlayer(BuildOptions options)
     {
         if (!File.Exists(ScenePath)) { Debug.LogError($"Assessment2DBuilder: {ScenePath} not built yet."); EditorApplication.Exit(1); return; }
-        var report = BuildPipeline.BuildPlayer(new[] { ScenePath }, PlayerPath, BuildTarget.StandaloneWindows64, BuildOptions.None);
+        var report = BuildPipeline.BuildPlayer(new[] { ScenePath }, PlayerPath, BuildTarget.StandaloneWindows64, options);
         Debug.Log($"Assessment2DBuilder: player build {report.summary.result}, {report.summary.totalErrors} errors, {report.summary.totalSize / (1024 * 1024)} MB at {PlayerPath}");
         if (Application.isBatchMode) EditorApplication.Exit(report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded ? 0 : 1);
     }
@@ -200,6 +207,89 @@ public static class Assessment2DBuilder
         BuildPlayer();
     }
 
+    const string AmbiencePath = "Assets/Audio/Ambience/Ambience_Assessment.mp3";
+
+    // Additive (Phase 3): opens the saved scene, wires the ambience clip into the director (if unset) and
+    // applies the "visual" hotspots from Scenes2D.json (existing ones are switched and re-placed, missing ones
+    // added beneath the existing hotspots). Every other object stays exactly as saved. Safe to re-run.
+    [MenuItem("The Last Assessment/Add Phase 3 To Saved Scene")]
+    public static void AddPhase3ToSavedScene()
+    {
+        // A 5-minute bed: stream it instead of decompressing ~50 MB into memory.
+        AssetDatabase.ImportAsset(AmbiencePath);
+        var importer = (AudioImporter)AssetImporter.GetAtPath(AmbiencePath);
+        var sample = importer.defaultSampleSettings;
+        sample.loadType = AudioClipLoadType.Streaming;
+        sample.compressionFormat = AudioCompressionFormat.Vorbis;
+        sample.quality = 0.6f;
+        importer.defaultSampleSettings = sample;
+        importer.SaveAndReimport();
+
+        var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        var director = UnityEngine.Object.FindFirstObjectByType<StoryDirector2D>(FindObjectsInactive.Include);
+        var so = new SerializedObject(director);
+        var clip = so.FindProperty("ambience");
+        if (!clip.objectReferenceValue)
+        {
+            clip.objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(AmbiencePath);
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+        // Camera push / drift stay inside the 1920x1080 frame on letterboxed (21:9, 4:3) screens.
+        var stageRt = (RectTransform)so.FindProperty("stage").objectReferenceValue;
+        if (!stageRt.GetComponent<RectMask2D>()) stageRt.gameObject.AddComponent<RectMask2D>();
+
+        var layout = JsonUtility.FromJson<Layout>(File.ReadAllText(LayoutPath));
+        var views = UnityEngine.Object.FindObjectsByType<StoryView>(FindObjectsInactive.Include);
+        int switched = 0, added = 0;
+        foreach (var spec in layout.views)
+        {
+            var view = views.First(v => v.viewId == spec.id);
+            var list = view.hotspots.ToList();
+            foreach (var h in (spec.hotspots ?? Array.Empty<HotspotSpec>()).Reverse())
+            {
+                var existing = view.FindHotspot(h.name);
+                if (existing)
+                {
+                    // Every existing hotspot takes its action from the data; only visual ones are re-placed
+                    // (the advance/disabled rects are the original Figma ones).
+                    existing.action = HotspotAction(h.action);
+                    if (existing.IsVisual)
+                    {
+                        var rt = (RectTransform)existing.transform;
+                        rt.anchoredPosition = new Vector2(h.rect[0], -h.rect[1]);
+                        rt.sizeDelta = ((RectTransform)rt.Find("Outline")).sizeDelta = new Vector2(h.rect[2], h.rect[3]);
+                    }
+                    EditorUtility.SetDirty(existing);
+                    switched++;
+                    continue;
+                }
+                if (h.action != "visual") continue;
+                var made = MakeHotspot(h.name, view.transform, h.rect[0], h.rect[1], h.rect[2], h.rect[3], Hotspot.Action.Visual);
+                made.transform.SetSiblingIndex(view.transform.Find("Dim").GetSiblingIndex() + 1); // beneath the existing hotspots
+                list.Insert(0, made);
+                added++;
+            }
+            view.hotspots = list.ToArray();
+            EditorUtility.SetDirty(view);
+        }
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log($"Assessment2DBuilder: Phase 3 applied to {ScenePath}: ambience wired, {switched} hotspots synced, {added} added.");
+    }
+
+    public static void AddPhase3ThenBuildPlayer()
+    {
+        AddPhase3ToSavedScene();
+        BuildPlayer();
+    }
+
+    static Hotspot.Action HotspotAction(string action) => action switch
+    {
+        "advance" => Hotspot.Action.Advance,
+        "visual" => Hotspot.Action.Visual,
+        _ => Hotspot.Action.Disabled,
+    };
+
     // ---------- Views ----------
 
     static StoryView BuildView(ViewSpec spec, Transform stage)
@@ -222,7 +312,7 @@ public static class Assessment2DBuilder
 
         // Hotspots sit above the art; later entries are on top.
         view.hotspots = (spec.hotspots ?? Array.Empty<HotspotSpec>())
-            .Select(h => MakeHotspot(h.name, rt, h.rect[0], h.rect[1], h.rect[2], h.rect[3], h.action == "advance" ? Hotspot.Action.Advance : Hotspot.Action.Disabled))
+            .Select(h => MakeHotspot(h.name, rt, h.rect[0], h.rect[1], h.rect[2], h.rect[3], HotspotAction(h.action)))
             .ToArray();
 
         var built = new Dictionary<string, (RectTransform rt, float x, float y)>();

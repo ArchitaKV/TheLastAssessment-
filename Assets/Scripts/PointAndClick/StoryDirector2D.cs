@@ -37,6 +37,11 @@ public class StoryDirector2D : MonoBehaviour
     [SerializeField] float fadeSeconds = 1.5f;
     [SerializeField] float crossFadeSeconds = 0.8f;
 
+    [Header("Presentation")]
+    [SerializeField] AudioClip ambience;                         // the supplied background track
+    [SerializeField, Range(0f, 1f)] float ambienceVolume = 0.1f; // faint bed under the text
+    const float PushIn = 1.035f, PushOut = 1.02f;                // camera push on view changes
+
     public AssessmentState State { get; private set; }
     public StoryView CurrentView { get; private set; }
 
@@ -56,6 +61,8 @@ public class StoryDirector2D : MonoBehaviour
     {
         AssessmentState.SaveFileName = SaveFile;
         ReadArgs();
+        Ambience.ResetText(); // a reload (title, NEW RUN) destroyed the previous scene's panels
+        Ambience.Play(ambience, ambienceVolume);
         data = AssessmentData.Parse(scriptAsset.text);
         foreach (var problem in data.Validate(4, IsKnownCue)) Debug.LogError($"AssessmentScript2D: {problem}");
         rules = JsonUtility.FromJson<EndingRules>(endingRulesAsset.text);
@@ -102,6 +109,7 @@ public class StoryDirector2D : MonoBehaviour
             if (node.HasQuestion)
             {
                 CurrentView.dialogue.Hide();
+                CurrentView.SetIdle(false); // no optional clicks while the answers are up
                 ScriptChoice chosen = null;
                 var asking = StartCoroutine(CurrentView.questionPanel.Ask(node, autoplay ? AutoAnswer(node.id) : null, c => chosen = c));
                 if (shotsDir != null) yield return Shot("question");
@@ -110,6 +118,7 @@ public class StoryDirector2D : MonoBehaviour
                 if (chosen.setFlags != null) foreach (var flag in chosen.setFlags) State.SetFlag(flag);
                 State.Save();
                 Trace($"ANSWER {node.id}={chosen.id}");
+                CurrentView.SetIdle(true);
                 foreach (var branch in node.branches ?? Array.Empty<ScriptBranch>())
                     if (branch.choices.Contains(chosen.id)) yield return PlayLines(branch.lines);
                 yield return PlayLines(node.post);
@@ -136,7 +145,7 @@ public class StoryDirector2D : MonoBehaviour
         State.Save();
         Trace($"END save={AssessmentState.SavePath}");
         yield return WaitForAdvance();
-        if (CurrentView) CurrentView.dialogue.Hide();
+        if (CurrentView) { CurrentView.dialogue.Hide(); CurrentView.SetIdle(false); CurrentView.Drift(false); }
         yield return FadeGroup(fade, 1f, fadeSeconds);
 
         string ending = State.flags.FirstOrDefault(f => f.StartsWith("ending:"))?.Substring(7);
@@ -255,7 +264,8 @@ public class StoryDirector2D : MonoBehaviour
         return go;
     }
 
-    // Cross-fades to the view (or reveals it from black on first entry / after an act card).
+    // Cross-fades to the view with a slow camera push (or reveals it from black on first entry / after an
+    // act card, the simple fallback, with the same push). The push ends at scale 1 before hotspots go live.
     IEnumerator Enter(StoryView view)
     {
         var previous = CurrentView;
@@ -266,6 +276,7 @@ public class StoryDirector2D : MonoBehaviour
             yield break;
         }
         CurrentView = view;
+        if (previous) previous.Drift(false);
         SetGroup(notice, 0f);
         view.SetDim(dimAmount);
         view.ResetCaption();
@@ -279,20 +290,32 @@ public class StoryDirector2D : MonoBehaviour
             if (previous) previous.SetAlpha(0f);
             view.SetAlpha(1f);
             revealPending = false;
-            if (fade.alpha > 0f && whiteFade.alpha == 0f) yield return FadeGroup(fade, 0f, previous ? 0.8f : fadeSeconds);
+            if (fade.alpha > 0f && whiteFade.alpha == 0f)
+            {
+                float seconds = previous ? 0.8f : fadeSeconds;
+                var push = StartCoroutine(Motion2D.Push(view.transform, PushIn, autoplay ? seconds * 0.25f : seconds));
+                yield return FadeGroup(fade, 0f, seconds);
+                yield return push;
+            }
         }
         else
         {
             for (float t = 0f; t < crossFadeSeconds; t += Time.deltaTime)
             {
-                float k = t / crossFadeSeconds;
+                float k = t / crossFadeSeconds, e = Mathf.SmoothStep(0f, 1f, k);
                 previous.SetAlpha(1f - k);
                 view.SetAlpha(k);
+                previous.transform.localScale = Vector3.one * Mathf.Lerp(1f, PushOut, e);
+                view.transform.localScale = Vector3.one * Mathf.Lerp(PushIn, 1f, e);
                 yield return null;
             }
             previous.SetAlpha(0f);
             view.SetAlpha(1f);
         }
+        if (previous) previous.transform.localScale = Vector3.one;
+        view.transform.localScale = Vector3.one;
+        view.SetIdle(true);
+        view.Drift(true);
         Trace($"VIEW {view.viewId}");
         yield return Shot($"view_{view.viewId}");
     }
@@ -327,10 +350,12 @@ public class StoryDirector2D : MonoBehaviour
         if (CurrentView) CurrentView.dialogue.Hide();
         yield return FadeGroup(fade, 1f, 0.6f);
         actCardText.text = actTitle;
+        var drift = StartCoroutine(Motion2D.Push(actCardText.transform, 0.97f, autoplay ? 0.7f : 2.8f)); // title settles as it appears
         yield return FadeGroup(actCard, 1f, 0.5f);
         yield return Shot("act");
         yield return Wait(1.8f);
         yield return FadeGroup(actCard, 0f, 0.5f);
+        yield return drift;
         revealPending = true; // the node's first view cue fades in from black
     }
 
@@ -373,13 +398,16 @@ public class StoryDirector2D : MonoBehaviour
 
     // ---------- Input and timing ----------
 
-    // Waits for a fresh press; the frame that ended the previous step is never reused.
+    // Waits for a fresh press; the frame that ended the previous step is never reused. A mouse press on an
+    // armed hotspot belongs to that hotspot and does not also advance the line.
     IEnumerator WaitForAdvance()
     {
         yield return null;
         if (autoplay) { yield return null; yield break; }
-        while (menus.Blocking || !AdvanceInput.Pressed()) yield return null;
+        while (menus.Blocking || !AdvanceInput.Pressed() || ClickOnHotspot()) yield return null;
     }
+
+    static bool ClickOnHotspot() => Hotspot.Hovered && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
 
     IEnumerator Wait(float seconds)
     {
@@ -414,6 +442,7 @@ public class StoryDirector2D : MonoBehaviour
         if (Arg("-shots") != null) EndingScreens.ShotHook = Shot;
         forcedEnding = Arg("-ending");
         shotsDir = Arg("-shots");
+        Motion2D.Instant = shotsDir != null;
         defaultAnswer = Arg("-default") ?? "A";
         foreach (var pair in (Arg("-answers") ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
         {

@@ -60,6 +60,26 @@ public class StoryView : MonoBehaviour
 
     public void SetAlpha(float alpha) => group.alpha = alpha;
 
+    // Idle camera drift: the whole view (art, hotspots, panels together, so nothing misaligns) eases in by
+    // 1.5% and back over 30 s. Starts and ends at scale 1, so it hands over cleanly to the transition push.
+    const float DriftAmount = 0.015f, DriftPeriod = 30f;
+    bool drifting;
+    float driftTime;
+
+    public void Drift(bool on)
+    {
+        drifting = on && !Motion2D.Instant;
+        driftTime = 0f;
+        if (!on) transform.localScale = Vector3.one;
+    }
+
+    void Update()
+    {
+        if (!drifting) return;
+        driftTime += Time.deltaTime;
+        transform.localScale = Vector3.one * (1f + DriftAmount * 0.5f * (1f - Mathf.Cos(driftTime * 2f * Mathf.PI / DriftPeriod)));
+    }
+
     public void SetDim(float amount)
     {
         if (dim) dim.color = new Color(0f, 0f, 0f, amount);
@@ -68,5 +88,11 @@ public class StoryView : MonoBehaviour
     public void ArmHotspots(bool armed)
     {
         foreach (var h in hotspots) h.SetArmed(armed);
+    }
+
+    // Visual-only hotspots are live while the view is on screen and no question is open.
+    public void SetIdle(bool idle)
+    {
+        foreach (var h in hotspots) if (h.IsVisual) h.SetArmed(idle);
     }
 }

@@ -15,7 +15,7 @@
             1182,
             330
           ],
-          "action": "disabled"
+          "action": "visual"
         },
         {
           "name": "Hotspot_Desk",
@@ -25,7 +25,7 @@
             1045,
             63
           ],
-          "action": "disabled"
+          "action": "visual"
         },
         {
           "name": "Hotspot_Tablet",
@@ -460,6 +460,18 @@
     {
       "id": "2.3",
       "bg": "Backgrounds/BG_2-3_EmptyDesk",
+      "hotspots": [
+        {
+          "name": "Hotspot_Desk",
+          "rect": [
+            210,
+            540,
+            1500,
+            190
+          ],
+          "action": "visual"
+        }
+      ],
       "dialogue": "card",
       "question": {
         "style": "card",
@@ -547,6 +559,18 @@
     {
       "id": "3.2",
       "bg": "Backgrounds/BG_3-2_RestrictedArchive",
+      "hotspots": [
+        {
+          "name": "Hotspot_Drawers",
+          "rect": [
+            1340,
+            60,
+            560,
+            700
+          ],
+          "action": "visual"
+        }
+      ],
       "dialogue": "card",
       "question": {
         "style": "card",
@@ -556,6 +580,18 @@
     {
       "id": "3.3",
       "bg": "Backgrounds/BG_3-3_MonitorTimeline",
+      "hotspots": [
+        {
+          "name": "Hotspot_Monitor",
+          "rect": [
+            610,
+            280,
+            700,
+            410
+          ],
+          "action": "disabled"
+        }
+      ],
       "dialogue": "card",
       "question": {
         "style": "card",
@@ -937,6 +973,16 @@
       ],
       "hotspots": [
         {
+          "name": "Hotspot_RecorderLook",
+          "rect": [
+            745,
+            280,
+            500,
+            580
+          ],
+          "action": "visual"
+        },
+        {
           "name": "Hotspot_Recorder",
           "rect": [
             770,
@@ -951,6 +997,18 @@
     {
       "id": "4.1",
       "bg": "Backgrounds/BG_4-1_DeskPapers",
+      "hotspots": [
+        {
+          "name": "Hotspot_PaperStack",
+          "rect": [
+            0,
+            580,
+            480,
+            215
+          ],
+          "action": "visual"
+        }
+      ],
       "dialogue": "card",
       "question": {
         "style": "card",
@@ -995,6 +1053,18 @@
     {
       "id": "4.2",
       "bg": "Backgrounds/BG_4-2_OfficeCity",
+      "hotspots": [
+        {
+          "name": "Hotspot_Monitor",
+          "rect": [
+            390,
+            480,
+            400,
+            170
+          ],
+          "action": "visual"
+        }
+      ],
       "dialogue": "card",
       "question": {
         "style": "card",

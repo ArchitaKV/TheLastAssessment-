@@ -18,7 +18,13 @@ public class QuestionPanel : MonoBehaviour
     public float minOptionHeight = 48f;
     public float optionPadding = 22f;
 
-    void Awake() => SetVisible(false);
+    Vector2 home;
+
+    void Awake()
+    {
+        home = ((RectTransform)transform).anchoredPosition;
+        SetVisible(false);
+    }
 
     public IEnumerator Ask(ScriptNode node, string autoplayChoice, System.Action<ScriptChoice> onChosen)
     {
@@ -53,9 +59,15 @@ public class QuestionPanel : MonoBehaviour
         yield return null;
         EventSystem.current.SetSelectedGameObject(options[0].gameObject);
 
+        var last = options[0].gameObject;
         while (chosen == null)
         {
             if (autoplayChoice != null) chosen = System.Array.Find(node.choices, c => c.id == autoplayChoice) ?? node.choices[0];
+            // Keep keyboard focus on an answer: closing the pause menu (or a click on empty space) clears the
+            // selection, so restore the last highlighted answer once no menu owns input (timeScale is 0 while one is open).
+            var selected = EventSystem.current.currentSelectedGameObject;
+            if (selected && System.Array.Exists(options, o => o.gameObject == selected)) last = selected;
+            else if (!selected && Time.timeScale > 0f) EventSystem.current.SetSelectedGameObject(last);
             yield return null;
         }
         group.interactable = group.blocksRaycasts = false;
@@ -71,9 +83,16 @@ public class QuestionPanel : MonoBehaviour
             .Replace("{TITLE}", node.title.ToUpperInvariant()).Replace("{SPEAKER}", node.question.speaker);
     }
 
+    bool shown;
+
     public void SetVisible(bool visible)
     {
+        if (visible != shown) { shown = visible; Ambience.TextShown(visible); }
+        StopAllCoroutines();
         group.alpha = visible ? 1f : 0f;
+        ((RectTransform)transform).anchoredPosition = home;
         group.interactable = group.blocksRaycasts = visible;
+        // Options are selectable from the first frame; the slide-in is cosmetic.
+        if (visible) StartCoroutine(Motion2D.Appear(group, (RectTransform)transform, home));
     }
 }

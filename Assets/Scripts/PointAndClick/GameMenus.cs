@@ -18,7 +18,9 @@ public class GameMenus : MonoBehaviour
     public TMP_Text journalHeader, journalBody;
 
     public bool InStory { get; set; }
-    public bool Blocking => pause.alpha > 0f || journal.alpha > 0f;
+    // The frame a menu closes still blocks: the Enter/click that chose Resume must not also advance the story.
+    public static int ClosedFrame = -1;
+    public bool Blocking => pause.alpha > 0f || journal.alpha > 0f || Time.frameCount == ClosedFrame;
 
     EvidenceDef[] evidenceDefs;
     Func<AssessmentState> state;
@@ -28,7 +30,7 @@ public class GameMenus : MonoBehaviour
         foreach (var g in new[] { title, confirm, pause, journal }) Set(g, false);
         Wire(resume, ClosePause);
         Wire(openJournal, () => { Set(pause, false); OpenJournal(); });
-        Wire(toTitle, () => { Time.timeScale = 1f; SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); });
+        Wire(toTitle, () => { Time.timeScale = 1f; Ambience.SetPaused(false); SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); });
         Wire(quitGame, Application.Quit);
         Wire(closeJournal, CloseJournal);
         Wire(quitFromTitle, Application.Quit);
@@ -87,12 +89,15 @@ public class GameMenus : MonoBehaviour
     void OpenPause()
     {
         Time.timeScale = 0f;
+        Ambience.SetPaused(true);
         Set(pause, true);
         StartCoroutine(Select(resume));
     }
 
     void ClosePause()
     {
+        ClosedFrame = Time.frameCount;
+        Ambience.SetPaused(false);
         Set(pause, false);
         Time.timeScale = 1f;
         EventSystem.current.SetSelectedGameObject(null);
@@ -115,6 +120,7 @@ public class GameMenus : MonoBehaviour
 
     void CloseJournal()
     {
+        ClosedFrame = Time.frameCount;
         Set(journal, false);
         Time.timeScale = 1f;
         EventSystem.current.SetSelectedGameObject(null);
