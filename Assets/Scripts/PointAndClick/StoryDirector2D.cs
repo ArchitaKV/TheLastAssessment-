@@ -39,7 +39,7 @@ public class StoryDirector2D : MonoBehaviour
 
     [Header("Presentation")]
     [SerializeField] AudioClip ambience;                         // the supplied background track
-    [SerializeField, Range(0f, 1f)] float ambienceVolume = 0.1f; // faint bed under the text
+    [SerializeField, Range(0f, 1f)] float ambienceVolume = 0.6f; // background music level (0.1 was inaudible on laptop speakers)
     const float PushIn = 1.035f, PushOut = 1.02f;                // camera push on view changes
 
     public AssessmentState State { get; private set; }

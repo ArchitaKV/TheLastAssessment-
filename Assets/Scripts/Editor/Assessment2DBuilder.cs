@@ -207,7 +207,7 @@ public static class Assessment2DBuilder
         BuildPlayer();
     }
 
-    const string AmbiencePath = "Assets/Audio/Ambience/Ambience_Assessment.mp3";
+    const string AmbiencePath = "Assets/Audio/Music/Ambience_Assessment.mp3";
 
     // Additive (Phase 3): opens the saved scene, wires the ambience clip into the director (if unset) and
     // applies the "visual" hotspots from Scenes2D.json (existing ones are switched and re-placed, missing ones

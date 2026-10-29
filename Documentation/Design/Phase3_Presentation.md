@@ -7,12 +7,11 @@ which is safe to re-run.
 
 ## Ambience (`Ambience.cs`)
 
-- **Track:** the supplied MP3, copied byte for byte to `Assets/Audio/Ambience/Ambience_Assessment.mp3`.
+- **Track:** the supplied MP3, copied byte for byte to `Assets/Audio/Music/Ambience_Assessment.mp3`.
   It runs 5:07 at 78 BPM, has no vocals, is dark and low-frequency, and starts and ends quietly.
   Import settings: Streaming, Vorbis quality 0.6.
-- **Volume:** 0.10, set on the director as `ambienceVolume`. In a focused game window, Unity's measured
-  mix level was about −36 to −44 dBFS. That is faint but audible. Nobody has listened to it yet; a person
-  should confirm the level.
+- **Volume:** 0.60 (background music), set on the director as `ambienceVolume`. It started at 0.10 (a mix level of about
+  −36 to −44 dBFS), which was inaudible on laptop speakers in the user's own playtest.
 - **Ducking:** the bed drops to 75% while dialogue or a question is on screen. Wordless beats (act cards,
   view entries, endings' cinematic moments) get the full bed. `Ambience.TextShown` is the hook for voice
   lines if any are added later.

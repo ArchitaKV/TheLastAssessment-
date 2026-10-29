@@ -27759,7 +27759,7 @@ MonoBehaviour:
   fadeSeconds: 1.5
   crossFadeSeconds: 0.8
   ambience: {fileID: 8300000, guid: 444f9fea77104cc48951e1776515fef9, type: 3}
-  ambienceVolume: 0.1
+  ambienceVolume: 0.6
 --- !u!114 &329680528
 MonoBehaviour:
   m_ObjectHideFlags: 0
